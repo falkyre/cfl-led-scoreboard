@@ -6,8 +6,10 @@ cd "${DIR}/.." || exit
 
 echo "$(tput setaf 6)Installing required dependencies. This may take some time (10-20 minutes-ish)...$(tput setaf 9)"
 
-#Install all pip3 requirements using the requirements.txt filler
-sudo pip3 install -r requirements.txt
+pip3 install --upgrade pip wheel setuptools
+
+#Install all requirements using the requirements.txt filler
+pip3 install -r requirements.txt
 
 # Pull submodule and ignore changes from script
 git submodule update --init --recursive

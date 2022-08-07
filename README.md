@@ -1,18 +1,10 @@
-# cfl-led-scoreboard
-
-![I promise to change this picture when I actually build my own](imgs/scoreboard.jpg)
+# WORK IN PROGESS - cfl-led-scoreboard
 
 Display your favourite CFL team score on an Raspberry Pi powered LED matrix. Currently supports 64x32 boards only.
 
 ### Credit and inpsiration
 
-This projectwas inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), and [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard) projects. Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
-
-### Donate
-
-<a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>  
-If you enjoyed this project, my NFL project, or if you're just feeling generous, consider buying me a beer. Cheers! :beers:
-You can also PM me on reddit under /u/mikemountain if you need help but don't think it requires an issue!
+This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), and [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard) projects. Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
 
 ## Features (v0.1.0)
 
@@ -54,18 +46,14 @@ The [mlb-led-scoreboard guys made a great wiki page to cover the hardware part o
 
 ### Software Installation
 
-#### Raspbian Distribution
-
-It is recommended you install the Lite version of Raspbian from the [Raspbian Downloads Page](https://www.raspberrypi.org/downloads/raspbian/). This version lacks a GUI, allowing your Pi to dedicate more system resources to drawing the screen.
-Make sure to set the timezone to your local timezone!
-
 #### Requirements
 
 You need Git for cloning this repo and PIP for installing the scoreboard software.
 
 ```
-sudo apt-get update
-sudo apt-get install git python-pip
+sudo apt update
+sudo apt install git python-pip
+pip install --upgrade pip wheel setuptools
 ```
 
 #### Installing the software
