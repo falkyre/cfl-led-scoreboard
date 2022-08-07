@@ -1,12 +1,10 @@
 import requests
 import datetime
+from dotenv import dotenv_values
 
-'''
-TODO: Grab API key from config.json
-'''
+ENV = dotenv_values('.env')
+API_KEY = "?key=" + ENV['CFL_API_KEY'] # Get yours here: https://api.cfl.ca/key-request
 
-# Get yours here: https://api.cfl.ca/key-request
-API_KEY = "?key=1zKYcrJgGUpiSsX8rvyaxssH2W9VHeBu"
 REQUEST_TIMEOUT = 5
 
 # get current datetime

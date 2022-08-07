@@ -121,3 +121,9 @@ media/
 *.pyc
 webgui-log.out
 RPiB2.code-workspace
+
+# Configs
+config/config.json
+config/*.config.json
+config/config.json.backup
+config/location.json
