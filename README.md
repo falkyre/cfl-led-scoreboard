@@ -52,8 +52,7 @@ You need Git for cloning this repo and PIP for installing the scoreboard softwar
 
 ```
 sudo apt update
-sudo apt install git python-pip
-pip install --upgrade pip wheel setuptools
+sudo apt install git python3-pip python3-venv
 ```
 
 #### Installing the software
@@ -64,6 +63,7 @@ This installation process might take some time because it will install all the d
 git clone --recursive https://github.com/sflems/cfl-led-scoreboard
 cd cfl-led-scoreboard/
 sudo chmod +x scripts/install.sh
+python3 -m venv env && source env/bin/activate
 sudo ./scripts/install.sh
 ```
 

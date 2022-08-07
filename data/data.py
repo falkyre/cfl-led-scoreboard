@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import time as t
-import nfl_api_parser as nflparser
+from . import nfl_api_parser as nflparser
 import debug
 
 NETWORK_RETRY_SLEEP_TIME = 10.0
@@ -32,7 +32,7 @@ class Data:
 
     def get_current_date(self):
         return datetime.utcnow()
-    
+
     def refresh_game(self):
         self.game = self.choose_game()
         self.needs_refresh = False
