@@ -222,11 +222,11 @@ def get_all_games():
             output = {
                 'id': game['game_id'],  # ID of the game
                 'date': game['date_start'],  # Date and time of the game
-                'home_team_abrev': game['team_2']['abbreviation'],  # Home team name abbreviation
+                'home_team_abbrev': game['team_2']['abbreviation'],  # Home team name abbreviation
                 'home_team_name': game['team_2']['nickname'],  # Home team name
                 'home_team_id': game['team_2']['team_id'],  # ID of the Home team
                 'home_score': int(game['team_2']['score']),  # Home team goals
-                'away_team_abrev': game['team_1']['abbreviation'],  # Away team name abbreviation
+                'away_team_abbrev': game['team_1']['abbreviation'],  # Away team name abbreviation
                 'away_team_id': game['team_1']['team_id'],  # ID of the Away team
                 'away_team_name': game['team_1']['nickname'],  # Away team name
                 'away_score': int(game['team_1']['score']),  # Away team goals
@@ -236,7 +236,8 @@ def get_all_games():
                 'quarter': game['event_status']['quarter'],
                 'over': bool(not game['event_status']['is_active']),
                 'redzone': game['event_status']['yards_to_go'] <= 20,
-                'possession': True,
+                # playbyplay, boxscores, possession to be added to get_single_game data! 
+                # 'possession': game['play_by_play'][0]['team_abbreviation'],
                 'game_type': game['event_type']['name'],  # Preseason, Regular Season, Playoffs, Grey Cup, Exhibition
                 'state': game['event_status']['name'],   # State of the game.
                 'week': int(game['week']),
