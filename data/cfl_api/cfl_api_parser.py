@@ -6,10 +6,10 @@ from datetime import datetime
 import dotenv
 import requests
 import debug
-from . import object
 
 ENV = dotenv.dotenv_values('.env')
 
+TESTING = False
 API_KEY = "?key=" + ENV['CFL_API_KEY']  # Get yours here: https://api.cfl.ca/key-request
 
 REQUEST_TIMEOUT = 5
@@ -47,14 +47,11 @@ TEAMS_URL = "{base}/v1/teams" + API_KEY
     3: Grey Cup
     4: Exhibition
 '''
-TESTING = True
 
 # Ref: SCHEDULE_URL = "{base}/v1/games?filter[date_start][ge]={day}" + API_KEY
 # Note: USED DAY. Will need filtering for this in CFL.
 def get_all_games(day=ISO_CURRENT_DATE):
    try:
-      if not TESTING:
-         data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day), timeout=REQUEST_TIMEOUT)
       data = { "data": [
             {
                "game_id":2172,
@@ -255,13 +252,13 @@ def get_all_games(day=ISO_CURRENT_DATE):
             "copyright":"Copyright 2017 Canadian Football League."
          }
       }
+      
+      sched = data
 
-      
-      if TESTING:
-         sched = data
-      else:
+      if TESTING is False:
+         data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day), timeout=REQUEST_TIMEOUT)
          sched = data.json()
-      
+            
       if len(sched['errors']) > 0:
             errors = []
             for error in sched['errors']:
@@ -354,7 +351,7 @@ def get_player(cfl_central_id):
             for error in player['errors']:
                errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
             raise ValueError(errors)
-      return player['data']
+      return player['data'][0]
    except requests.exceptions.RequestException as e:
       raise ValueError(e)
 
@@ -369,33 +366,32 @@ def get_overview(game_id):
             for error in game['errors']:
                errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
             raise ValueError(errors)
-      for game in game['data'][0]:
-         output = {
-               'id': game['game_id'],  # ID of the game
-               'date': game['date_start'],  # Date and time of the game
-               'home_team_abbrev': game['team_2']['abbreviation'],  # Home team name abbreviation
-               'home_team_name': game['team_2']['nickname'],  # Home team name
-               'home_team_id': game['team_2']['team_id'],  # ID of the Home team
-               'home_score': int(game['team_2']['score']),  # Home team goals
-               'away_team_abbrev': game['team_1']['abbreviation'],  # Away team name abbreviation
-               'away_team_id': game['team_1']['team_id'],  # ID of the Away team
-               'away_team_name': game['team_1']['nickname'],  # Away team name
-               'away_score': int(game['team_1']['score']),  # Away team goals
-               'down': game['event_status']['down'],   # Current down.
-               'spot': game['event_status']['yards_to_go'],   # Current yards to go.
-               'time': f"{game['event_status']}:{game['event_status']['seconds']}",
-               'quarter': game['event_status']['quarter'],
-               'over': bool(not game['event_status']['is_active']),
-               'redzone': game['event_status']['yards_to_go'] <= 20,
-               'game_type': game['event_type']['name'],  # Preseason, Regular Season, Playoffs, Grey Cup, Exhibition
-               'state': game['event_status']['name'],   # State of the game.
-               'week': int(game['week']),
-               'season': int(game['season']),
-               'attendance': int(game['attendance']),
-               'boxscore': dict(game['boxscore']),
-               'play_by_play': dict(game['play_by_play']),
-         }
-         # put this dictionary into the larger dictionary
+      output = {
+            'id': game['data'][0]['game_id'],  # ID of the game
+            'date': game['data'][0]['date_start'],  # Date and time of the game
+            'home_team_abbrev': game['data'][0]['team_2']['abbreviation'],  # Home team name abbreviation
+            'home_team_name': game['data'][0]['team_2']['nickname'],  # Home team name
+            'home_team_id': game['data'][0]['team_2']['team_id'],  # ID of the Home team
+            'home_score': int(game['data'][0]['team_2']['score']),  # Home team goals
+            'away_team_abbrev': game['data'][0]['team_1']['abbreviation'],  # Away team name abbreviation
+            'away_team_id': game['data'][0]['team_1']['team_id'],  # ID of the Away team
+            'away_team_name': game['data'][0]['team_1']['nickname'],  # Away team name
+            'away_score': int(game['data'][0]['team_1']['score']),  # Away team goals
+            'down': game['data'][0]['event_status']['down'],   # Current down.
+            'spot': game['data'][0]['event_status']['yards_to_go'],   # Current yards to go.
+            'time': f"{game['data'][0]['event_status']}:{game['data'][0]['event_status']['seconds']}",
+            'quarter': game['data'][0]['event_status']['quarter'],
+            'over': bool(not game['data'][0]['event_status']['is_active']),
+            'redzone': game['data'][0]['event_status']['yards_to_go'] <= 20,
+            'game_type': game['data'][0]['event_type']['name'],  # Preseason, Regular Season, Playoffs, Grey Cup, Exhibition
+            'state': game['data'][0]['event_status']['name'],   # State of the game.
+            'week': int(game['data'][0]['week']),
+            'season': int(game['data'][0]['season']),
+            'attendance': int(game['data'][0]['attendance']),
+            'boxscore': dict(game['data'][0]['boxscore']),
+            'play_by_play': dict(game['data'][0]['play_by_play']),
+      }
+      # put this dictionary into the larger dictionary
       return output
    except requests.exceptions.RequestException as e:
       raise ValueError(e)

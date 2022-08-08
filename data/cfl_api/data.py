@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 import time as t
-import pytz
+from tzlocal import get_localzone
 from . import cfl_api_parser as cflparser
 import debug
+from .object import MultiLevelObject
 
 
 class Data:
@@ -22,7 +23,8 @@ class Data:
 
         # Fetch the teams info
         self.refresh_games()
-        self.refresh_games(self.current_game()['id'])
+        # self.refresh_games(self.current_game()['id'])
+        self.showing_preferred_game()
 
         # self.playoffs = cflparser.is_playoffs()
         # self.games = cflparser.get_all_games()
@@ -31,7 +33,7 @@ class Data:
         # self.scores = {}
 
     def get_current_date(self):
-        return datetime.now(pytz.timezone('America/Toronto'))
+        return datetime.now(get_localzone())
 
     # Get All Games
     def refresh_games(self, game_id=None):
@@ -94,6 +96,16 @@ class Data:
 
     def current_game(self):
         return self.games[self.current_game_index]
+    
+    # figure this out later heh
+    def showing_preferred_game(self):
+        showing_preferred_team = self.config.preferred_teams[0] in [self.current_game()['home_team_abbrev'], self.current_game()['away_team_abbrev']]
+        if showing_preferred_team and self.game['state'] == 'In-Progress':
+            debug.info("showing_preferred_game = true")
+            return True
+        
+        debug.info("showing_preferred_game = false")
+        return False
 
     def advance_to_next_game(self):
         self.current_game_index = self.__next_game_index()

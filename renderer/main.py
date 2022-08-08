@@ -1,12 +1,11 @@
+import time as t
+from datetime import datetime, timedelta
+from dateutil import parser
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
 from rgbmatrix import graphics
 from utils import center_text
-from calendar import month_abbr
 from renderer.screen_config import screenConfig
-from datetime import datetime, timedelta
-import time as t
 import debug
-import re
 
 GAMES_REFRESH_RATE = 900.0
 
@@ -64,9 +63,9 @@ class MainRenderer:
 
     def __rotate_rate_for_game(self, game):
         rotate_rate = self.data.config.rotation_rates_live
-        if game['state'] == 'pre':
+        if game['state'] == 'Pre-Game':
             rotate_rate = self.data.config.rotation_rates_pregame
-        if game['state'] == 'post':
+        if game['state'] == 'Final':
             rotate_rate = self.data.config.rotation_rates_final
         return rotate_rate
 
@@ -80,22 +79,13 @@ class MainRenderer:
 
         return True
 
-        # figure this out later heh
-        # showing_preferred_team = self.data.config.preferred_teams[0] in [game.awayteam, game.hometeam]
-        # if showing_preferred_team and game['status']:
-        #     if self.data.config.rotation_preferred_team_live_mid_inning == True and Status.is_inning_break(overview.inning_state):
-        #         return True
-        #     return False
-
-        # return True
-
     def __draw_game(self, game):
         time = self.data.get_current_date()
-        gametime = datetime.strptime(game['date'], "%Y-%m-%dT%H:%M:%S%z")
-        if time < gametime - timedelta(hours=1) and game['state'] == 'Pre-Game':
+        gamedatetime = self.data.get_gametime()
+        if time < gamedatetime - timedelta(hours=1) and game['state'] == 'Pre-Game':
             debug.info('Pre-Game State')
             self._draw_pregame(game)
-        elif time < gametime and game['state'] == 'Pre-Game':
+        elif time < gamedatetime and game['state'] == 'Pre-Game':
             debug.info('Countdown til gametime')
             self._draw_countdown(game)
         elif game['state'] == 'Final':
@@ -109,7 +99,7 @@ class MainRenderer:
     def _draw_pregame(self, game):
             time = self.data.get_current_date()
             gamedatetime = self.data.get_gametime()
-            if gamedatetime.day == time.day:
+            if gamedatetime.day == time.day and gamedatetime.month == time.month:
                 date_text = 'TODAY'
             else:
                 date_text = gamedatetime.strftime('%A %-d %b').upper()
@@ -135,7 +125,6 @@ class MainRenderer:
             self.image = Image.new('RGB', (self.width, self.height))
             self.draw = ImageDraw.Draw(self.image)
 
-    # I AM BROKEN
     def _draw_countdown(self, game):
         time = self.data.get_current_date()
         gametime = self.data.get_gametime()
@@ -167,6 +156,8 @@ class MainRenderer:
             self.image = Image.new('RGB', (self.width, self.height))
             self.draw = ImageDraw.Draw(self.image)
             # t.sleep(1)
+        else:
+            self._draw_game(game)
 
     def _draw_live_game(self, game):
         homescore = '{0:02d}'.format(game['home_score'])
@@ -234,7 +225,7 @@ class MainRenderer:
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         # Check if the game is over
-        if game['state'] == 'post':
+        if game['state'] == 'Final':
             debug.info('GAME OVER')
         self.data.needs_refresh = True
 

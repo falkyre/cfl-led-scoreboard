@@ -1,5 +1,6 @@
 """Module that is used for storing respons dicts"""
 
+
 class MultiLevelObject(object):
     """
         Turn multi dimensional dictionary into an object of objects.
