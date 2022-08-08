@@ -100,7 +100,8 @@ class MainRenderer:
             self._draw_countdown(game)
         elif game['state'] == 'Final':
             debug.info('Final State')
-            self._draw_post_game(game)
+            #self._draw_post_game(game)
+            self._draw_live_game(game)
         else:
             debug.info('Live State, checking every 5s')
             self._draw_live_game(game)
@@ -177,31 +178,31 @@ class MainRenderer:
             self.data.refresh_games()
             self.data.needs_refresh = False
         # Use this code if you want the animations to run
-        if game['home_score'] > homescore + 5 or game['away_score'] > awayscore + 5:
+        if game['home_score'] > int(homescore) + 5 or game['away_score'] > int(awayscore) + 5:
             debug.info('should draw TD')
             self._draw_td()
-        elif game['home_score'] > homescore + 2 or game['away_score'] > awayscore + 2:
+        elif game['home_score'] > int(homescore) + 2 or game['away_score'] > int(awayscore) + 2:
             debug.info('should draw FG')
             self._draw_fg()
         # Prepare the data
         # score = '{}-{}'.format(overview['away_score'], overview['home_score'])
+        quarter = f"Q{game['quarter']}"
+        time_period = game['time']
+        pos = None
+        down = None
+        spot = None
+        # FIX ME FOR CFL DATA SPEC - get from play_by_play from individual games data
         #if game['possession'] == game['away_team_id']:
         #    pos = game['away_team_abbrev']
         #else:
         #    pos = game['home_team_abbrev']
-        pos = "TODO"
-        quarter = str(game['quarter'])
-        time_period = game['time']
-        # this is ugly but I want to replace the possession info with down info and spot info
-        down = None
-        spot = None
         if game['down']:
-            down = re.sub(r"[a-z]+", "", game['down']).replace(" ", "")
+            down = f"DN: {game['down']}"
             info_pos = center_text(self.font_mini.getsize(str(down))[0], 32)
             self.draw.multiline_text((info_pos, 19), str(down), fill=(255, 255, 255), font=self.font_mini, align="center")
         # FIX ME FOR CFL DATA SPEC
         if game['spot']:
-            spot = game['spot'].replace(" ", "")
+            spot = f"YTG: {game['spot']}"
             info_pos = center_text(self.font_mini.getsize(spot)[0], 32)
             self.draw.multiline_text((info_pos, 25), spot, fill=(255, 255, 255), font=self.font_mini, align="center")
         pos_colour = (255, 255, 255)
@@ -213,8 +214,8 @@ class MainRenderer:
         
         # score_position = center_text(self.font.getsize(score)[0], 32)
         quarter_position = center_text(self.font_mini.getsize(quarter)[0], 32)
-        info_pos = center_text(self.font_mini.getsize(pos)[0], 32)
-        self.draw.multiline_text((info_pos, 13), pos, fill=pos_colour, font=self.font_mini, align="center")
+        # info_pos = center_text(self.font_mini.getsize(pos)[0], 32)
+        # self.draw.multiline_text((info_pos, 13), pos, fill=pos_colour, font=self.font_mini, align="center")
         self.draw.multiline_text((quarter_position, 0), quarter, fill=(255, 255, 255), font=self.font_mini, align="center")
         self.draw.multiline_text((time_period_pos, 6), time_period, fill=(255, 255, 255), font=self.font_mini, align="center")
         self.draw.multiline_text((6, 19), awayscore, fill=(255, 255, 255), font=self.font, align="center")
@@ -224,8 +225,8 @@ class MainRenderer:
         self.canvas.SetImage(self.image, 0, 0)
         
         # TEMP Open the logo image file
-        away_team_logo = Image.open('logos/{}.png'.format(game['awayteam'].lower())).resize((20, 20), Image.BOX)
-        home_team_logo = Image.open('logos/{}.png'.format(game['hometeam'].lower())).resize((20, 20), Image.BOX)
+        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
         
         # Put the images on the canvas
         self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 0)
