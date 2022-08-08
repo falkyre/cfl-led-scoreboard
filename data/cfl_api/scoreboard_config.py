@@ -27,6 +27,7 @@ class ScoreboardConfig:
 
         # Debug
         self.debug = json["debug"]
+        self.testing = json["testing"]
 
         # Check if these are lists or strings
         self.check_preferred_teams()

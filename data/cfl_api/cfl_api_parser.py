@@ -6,11 +6,15 @@ from datetime import datetime
 import dotenv
 import requests
 import debug
+from . import scoreboard_config as sb_config
+from utils import args
 
 ENV = dotenv.dotenv_values('.env')
+API_KEY = ENV['CFL_API_KEY']  # Get yours here: https://api.cfl.ca/key-request
 
-TESTING = False
-API_KEY = "?key=" + ENV['CFL_API_KEY']  # Get yours here: https://api.cfl.ca/key-request
+ARGS = args()
+SB_CONFIG = sb_config.ScoreboardConfig("config", ARGS)
+TESTING = SB_CONFIG.testing
 
 REQUEST_TIMEOUT = 5
 NETWORK_RETRY_SLEEP_TIME = 10.0
@@ -20,15 +24,14 @@ CURRENT_DATE = datetime.today()
 ISO_CURRENT_DATE = CURRENT_DATE.isoformat()
 
 BASE_URL = "http://api.cfl.ca"
-GAME_OVERVIEW_URL = "{base}/v1/games?filter[game_id][eq]={game_id}&include=boxscore,play_by_play" + API_KEY
-SCHEDULE_URL = "{base}/v1/games?filter[date_start][eq]={day}" + API_KEY
-SEASON_URL = "{base}/v1/seasons" + API_KEY
-STANDINGS_URL = "{base}/v1/standings/{year}" + API_KEY
-XO_STANDINGS_URL = "{base}/v1/standings/crossover/{year}" + API_KEY
-PLAYER_URL = "{base}/v1/players/{player_id}" + API_KEY
-TEAMS_URL = "{base}/v1/teams" + API_KEY
+GAME_OVERVIEW_URL = "{base}/v1/games?filter[game_id][eq]={game_id}&include=boxscore,play_by_play&key={api_key}"
+SCHEDULE_URL = "{base}/v1/games?filter[date_start][eq]={day}&key={api_key}"
+SEASON_URL = "{base}/v1/seasons?key={api_key}"
+STANDINGS_URL = "{base}/v1/standings/{year}?key={api_key}"
+XO_STANDINGS_URL = "{base}/v1/standings/crossover/{year}?key={api_key}"
+PLAYER_URL = "{base}/v1/players/{player_id}?key={api_key}"
+TEAMS_URL = "{base}/v1/teams?key={api_key}"
 
-# STATUS_URL = 
 # Possible CFL game Statuses
 ''' CFL
     1: Pre-Game
@@ -38,7 +41,6 @@ TEAMS_URL = "{base}/v1/teams" + API_KEY
     9: Cancelled
 '''
 
-
 # Possible CFL Event Types
 '''
     0: Preseason
@@ -47,6 +49,7 @@ TEAMS_URL = "{base}/v1/teams" + API_KEY
     3: Grey Cup
     4: Exhibition
 '''
+
 
 # Ref: SCHEDULE_URL = "{base}/v1/games?filter[date_start][ge]={day}" + API_KEY
 # Note: USED DAY. Will need filtering for this in CFL.
@@ -256,7 +259,7 @@ def get_all_games(day=ISO_CURRENT_DATE):
       sched = data
 
       if TESTING is False:
-         data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day), timeout=REQUEST_TIMEOUT)
+         data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
          sched = data.json()
             
       if len(sched['errors']) > 0:
@@ -302,7 +305,7 @@ def get_all_games(day=ISO_CURRENT_DATE):
 # Ref: SEASON_URL = "{base}/v1/seasons"
 def get_current_season():
    try:
-      data = requests.get(SEASON_URL.format(base=BASE_URL), timeout=REQUEST_TIMEOUT)
+      data = requests.get(SEASON_URL.format(base=BASE_URL, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
       cs = data.json()
       if len(cs['errors']) > 0:
             errors = []
@@ -316,7 +319,7 @@ def get_current_season():
 # Ref: SEASON_URL = "{base}/v1/seasons"
 def get_current_week():
    try:
-      data = requests.get(SEASON_URL.format(base=BASE_URL), timeout=REQUEST_TIMEOUT)
+      data = requests.get(SEASON_URL.format(base=BASE_URL, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
       cw = data.json()
       if len(cw['errors']) > 0:
             errors = []
@@ -330,7 +333,7 @@ def get_current_week():
 # Ref: TEAMS_URL = "{base}/v1/teams"
 def get_teams():
    try:
-      data = requests.get(TEAMS_URL.format(base=BASE_URL), timeout=REQUEST_TIMEOUT)
+      data = requests.get(TEAMS_URL.format(base=BASE_URL, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
       teams = data.json()
       if len(teams['errors']) > 0:
             errors = []
@@ -344,7 +347,7 @@ def get_teams():
 # Ref: PLAYER_URL = "{base}/v1/players/{player_id}"
 def get_player(cfl_central_id):
    try:
-      data = requests.get(PLAYER_URL.format(base=BASE_URL, player_id=cfl_central_id), timeout=REQUEST_TIMEOUT)
+      data = requests.get(PLAYER_URL.format(base=BASE_URL, player_id=cfl_central_id, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
       player = data.json()
       if len(player['errors']) > 0:
             errors = []
@@ -359,7 +362,7 @@ def get_player(cfl_central_id):
 # Game Overview
 def get_overview(game_id):
    try:
-      data = requests.get(GAME_OVERVIEW_URL.format(base=BASE_URL, game_id=game_id), timeout=REQUEST_TIMEOUT)
+      data = requests.get(GAME_OVERVIEW_URL.format(base=BASE_URL, game_id=game_id, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
       game = data.json()
       if len(game['errors']) > 0:
             errors = []
@@ -399,7 +402,7 @@ def get_overview(game_id):
 # Ref: STANDINGS_URL = "{base}/v1/standings/{year}"
 # def get_standings(year=get_current_season()):
 #     try:
-#         data = requests.get(STANDINGS_URL.format(base=BASE_URL, year=year), timeout=REQUEST_TIMEOUT)
+#         data = requests.get(STANDINGS_URL.format(base=BASE_URL, year=year, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
 #         standings = data.json()
 #         if len(standings['errors']) > 0:
 #             errors = []
@@ -413,7 +416,7 @@ def get_overview(game_id):
 # Ref: STANDINGS_URL = "{base}/v1/standings/crossover/{year}"
 # def get_standings_crossover(year=2014, data=xo):
 #     try:
-#         # data = requests.get(XO_STANDINGS_URL.format(base=BASE_URL, year=year), timeout=REQUEST_TIMEOUT)
+#         # data = requests.get(XO_STANDINGS_URL.format(base=BASE_URL, year=year, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
 #         xo = data
 #         if len(xo['errors']) > 0:
 #             errors = []

@@ -16,5 +16,6 @@
 		}
 	},
     "scrolling_speed": 15,
-    "debug": "true"
+    "debug": "true",
+    "testing": "true"
 }

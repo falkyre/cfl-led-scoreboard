@@ -3,7 +3,6 @@ import time as t
 from tzlocal import get_localzone
 from . import cfl_api_parser as cflparser
 import debug
-from .object import MultiLevelObject
 
 
 class Data:
@@ -26,11 +25,7 @@ class Data:
         # self.refresh_games(self.current_game()['id'])
         self.showing_preferred_game()
 
-        # self.playoffs = cflparser.is_playoffs()
-        # self.games = cflparser.get_all_games()
-        # self.game = self.choose_game()
-        # self.gametime = self.get_gametime()
-        # self.scores = {}
+        # TODO: self.playoffs = cflparser.is_playoffs()
 
     def get_current_date(self):
         return datetime.now(get_localzone())
@@ -55,14 +50,14 @@ class Data:
                     break
                 except ValueError as e:
                     self.network_issues = True
-                    debug.error("ValueError while refreshing master list of games. {} retries remaining.".format(attempts_remaining))
-                    debug.error("Error(s): {}".format(e))
+                    debug.error(f"Error refreshing master list of games. {e} retries remaining.")
+                    debug.error(f"Error(s): {e}")
                     attempts_remaining -= 1
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
                 except Exception as e:
                     self.network_issues = True
-                    debug.error("Networking error while refreshing the master list of games. {} retries remaining.".format(attempts_remaining))
-                    debug.error("Exception(s): {}".format(e))
+                    debug.error(f"Network error while refreshing the list of games. {attempts_remaining} retries remaining.")
+                    debug.error(f"Exception(s): {e}")
                     attempts_remaining -= 1
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
             else:
@@ -74,14 +69,14 @@ class Data:
                     break
                 except ValueError as e:
                     self.network_issues = True
-                    debug.error("ValueError while refreshing single game overview - ID: {}. {} retries remaining.".format(game_id, attempts_remaining))
-                    debug.error("Error(s): {}".format(e))
+                    debug.error(f"ValueError while refreshing single game overview - ID: {game_id}. {attempts_remaining} retries remaining.")
+                    debug.error(f"Error(s): {e}")
                     attempts_remaining -= 1
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
                 except Exception as e:
                     self.network_issues = True
-                    debug.error("Networking error while refreshing single game overview - ID: {}. {} retries remaining.".format(game_id, attempts_remaining))
-                    debug.error("Exception(s): {}".format(e))
+                    debug.error(f"Networking error while refreshing single game overview - ID: {game_id}. {attempts_remaining} retries remaining.")
+                    debug.error(f"Exception(s): {e}")
                     attempts_remaining -= 1
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
 
@@ -103,7 +98,6 @@ class Data:
         if showing_preferred_team and self.game['state'] == 'In-Progress':
             debug.info("showing_preferred_game = true")
             return True
-        
         debug.info("showing_preferred_game = false")
         return False
 
