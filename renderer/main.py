@@ -170,17 +170,7 @@ class MainRenderer:
             # Put the images on the canvas
             self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
             self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
-            # awaysize = self.screen_config.team_logos_pos[game['awayteam']]['size']
-            # homesize = self.screen_config.team_logos_pos[game['hometeam']]['size']
-            # # Set the position of each logo
-            # away_team_logo_pos = self.screen_config.team_logos_pos[game['awayteam']]['preaway']
-            # home_team_logo_pos = self.screen_config.team_logos_pos[game['hometeam']]['prehome']
-            # # Open the logo image file
-            # away_team_logo = Image.open('logos/{}.png'.format(game['awayteam'].lower())).resize((awaysize, awaysize), 1)
-            # home_team_logo = Image.open('logos/{}.png'.format(game['hometeam'].lower())).resize((homesize, homesize), 1)
-            # # Put the images on the canvas
-            # self.canvas.SetImage(away_team_logo.convert("RGB"), away_team_logo_pos["x"], away_team_logo_pos["y"])
-            # self.canvas.SetImage(home_team_logo.convert("RGB"), home_team_logo_pos["x"], home_team_logo_pos["y"])
+
             # Load the canvas on screen.
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             # Refresh the Data image.
@@ -279,23 +269,7 @@ class MainRenderer:
         # Put the images on the canvas
         self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 0)
         self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 0)
-        # awaysize = self.screen_config.team_logos_pos[overview['hometeam']]['size']
-        # homesize = self.screen_config.team_logos_pos[overview['awayteam']]['size']
-        # awaysize = self.screen_config.team_logos_pos[game['awayteam']]['size']
-        # homesize = self.screen_config.team_logos_pos[game['hometeam']]['size']
-        # Set the position of each logo
-        # away_team_logo_pos = self.screen_config.team_logos_pos[overview['hometeam']]['away']
-        # home_team_logo_pos = self.screen_config.team_logos_pos[overview['awayteam']]['home']
-        # away_team_logo_pos = self.screen_config.team_logos_pos[game['awayteam']]['away']
-        # home_team_logo_pos = self.screen_config.team_logos_pos[game['hometeam']]['home']
-        # Open the logo image file
-        # away_team_logo = Image.open('logos/{}.png'.format(overview['hometeam'].lower())).resize((awaysize, awaysize), 1)
-        # home_team_logo = Image.open('logos/{}.png'.format(overview['awayteam'].lower())).resize((homesize, homesize), 1)
-        # away_team_logo = Image.open('logos/{}.png'.format(game['awayteam'])).resize((19, 19), 1)
-        # home_team_logo = Image.open('logos/{}.png'.format(game['hometeam'])).resize((19, 19), 1)
-        # Put the images on the canvas
-        # self.canvas.SetImage(away_team_logo.convert("RGB"), away_team_logo_pos["x"], away_team_logo_pos["y"])
-        # self.canvas.SetImage(home_team_logo.convert("RGB"), home_team_logo_pos["x"], home_team_logo_pos["y"])
+
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
         # Refresh the Data image.
