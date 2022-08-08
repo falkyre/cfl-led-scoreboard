@@ -3,6 +3,7 @@ import datetime
 from dotenv import dotenv_values
 
 ENV = dotenv_values('.env')
+
 API_KEY = "?key=" + ENV['CFL_API_KEY'] # Get yours here: https://api.cfl.ca/key-request
 
 REQUEST_TIMEOUT = 5
@@ -16,7 +17,6 @@ GAME_OVERVIEW_URL = "{base}/v1/games?filter[game_id][eq]={game_id}&include=boxsc
 SCHEDULE_URL = "{base}/v1/games?filter[date_start][eq]={day}" + API_KEY
 SEASON_URL = "{base}/v1/seasons" + API_KEY
 STANDINGS_URL = "{base}/v1/standings/{year}" + API_KEY
-# STANDINGS_WILD_CARD = STANDINGS_URL + "/wildCardWithLeaders"
 XO_STANDINGS_URL = "{base}/v1/standings/crossover/{year}" + API_KEY
 PLAYER_URL = "{base}/v1/players/{player_id}" + API_KEY
 TEAMS_URL = "{base}/v1/teams" + API_KEY
@@ -75,7 +75,7 @@ def get_current_week():
 
 # Ref: SCHEDULE_URL = "{base}/v1/games?filter[date_start][ge]={day}" + API_KEY
 # Note: USED DAY. Will need filtering for this in CFL.
-def get_schedule(day=ISO_CURRENT_DATE):
+def get_all_games(day=ISO_CURRENT_DATE):
     try:
         data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day), timeout=REQUEST_TIMEOUT)
         sched = data.json()

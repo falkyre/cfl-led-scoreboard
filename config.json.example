@@ -16,6 +16,5 @@
 		}
 	},
     "scrolling_speed": 2,
-    "use_helmet_logos": true,
     "debug": "true"
 }

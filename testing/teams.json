@@ -12,7 +12,7 @@
           "venue_capacity":27000,
           "division_id":2,
           "division_name":"West",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/bc.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/bc.png",
@@ -31,7 +31,7 @@
           "venue_capacity":35650,
           "division_id":2,
           "division_name":"West",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/cgy.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/cgy.png",
@@ -50,7 +50,7 @@
           "venue_capacity":56302,
           "division_id":2,
           "division_name":"West",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/edm.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/edm.png",
@@ -69,7 +69,7 @@
           "venue_capacity":23218,
           "division_id":1,
           "division_name":"East",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/ham.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/ham.png",
@@ -88,7 +88,7 @@
           "venue_capacity":23420,
           "division_id":1,
           "division_name":"East",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/mtl.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/mtl.png",
@@ -107,7 +107,7 @@
           "venue_capacity":24000,
           "division_id":1,
           "division_name":"East",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/ott.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/ott.png",
@@ -126,7 +126,7 @@
           "venue_capacity":33350,
           "division_id":2,
           "division_name":"West",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/ssk.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/ssk.png",
@@ -145,7 +145,7 @@
           "venue_capacity":26000,
           "division_id":1,
           "division_name":"East",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tor.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/tor.png",
@@ -164,7 +164,7 @@
           "venue_capacity":33422,
           "division_id":2,
           "division_name":"West",
-          "logo_image_url":null,
+          "logo_image_url":"",
           "images":{
              "logo_image_url":"http:\/\/api.cfl.ca\/images\/logos\/wpg.svg",
              "tablet_image_url":"http:\/\/api.cfl.ca\/images\/logos\/tablet\/wpg.png",

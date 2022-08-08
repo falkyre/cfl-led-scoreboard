@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta
-from data.scoreboard_config import ScoreboardConfig
+from data.nfl_api.data import Data
+from data.nfl_api.scoreboard_config import ScoreboardConfig
 from renderer.main import MainRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
-from data.data import Data
 import debug
 
 SCRIPT_NAME = "CFL Scoreboard"
