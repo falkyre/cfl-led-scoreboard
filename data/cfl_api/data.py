@@ -1,6 +1,7 @@
 import requests
 import datetime
 import dotenv
+import pytz
 import debug
 from datetime import datetime, timedelta
 import time as t
@@ -73,7 +74,7 @@ class Data:
         # self.scores = {}
 
     def get_current_date(self):
-        return datetime.utcnow()
+        return datetime.now(pytz.timezone('America/Toronto'))
 
     def refresh_game(self):
         self.game = self.choose_game()
