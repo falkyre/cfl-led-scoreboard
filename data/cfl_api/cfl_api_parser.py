@@ -2,252 +2,429 @@
 Module that is used for getting basic information about a game
 such as the scoreboard and the box score.
 """
-
-from .utils import convert_time
-from . import data
+from datetime import datetime
+import dotenv
+import requests
+import debug
 from . import object
 
+ENV = dotenv.dotenv_values('.env')
 
-def get_all_games():
-    """
-        Return the scoreboard information for games matching the parameters
-        as a dictionary.
-    """
-   # data = cfl_api.data.get_all_games()
+API_KEY = "?key=" + ENV['CFL_API_KEY']  # Get yours here: https://api.cfl.ca/key-request
 
-    data = { "data": [
-     {
-        "game_id":2172,
-        "date_start":"2015-06-08T19:30:00-04:00",
-        "game_number":1,
-        "week":1,
-        "season":2015,
-        "attendance":0,
-        "event_type":{
-           "event_type_id":0,
-           "name":"Preseason",
-           "title":""
-        },
-        "event_status":{
-           "event_status_id":4,
-           "name":"Final",
-           "is_active":False,
-           "quarter":4,
-           "minutes":0,
-           "seconds":0,
-           "down":3,
-           "yards_to_go":13
-        },
-        "venue":{
-           "venue_id":4,
-           "name":"Tim Hortons Field"
-        },
-        "weather":{
-           "temperature":21,
-           "sky":"Overcast",
-           "wind_speed":"",
-           "wind_direction":"6km\/h SW",
-           "field_conditions":"Dry"
-        },
-        "coin_toss":{
-           "coin_toss_winner":"",
-           "coin_toss_winner_election":"Ottawa won coin toss and elected to receive."
-        },
-        "tickets_url":"http:\/\/www.ticats.ca\/tickets\/",
-        "team_1":{
-           "team_id":6,
-           "location":"Ottawa",
-           "nickname":"Redblacks",
-           "abbreviation":"OTT",
-           "score":10,
-           "venue_id":6,
-           "linescores":[
-              {
-                 "quarter":1,
-                 "score":0
-              },
-              {
-                 "quarter":2,
-                 "score":0
-              },
-              {
-                 "quarter":3,
-                 "score":0
-              },
-              {
-                 "quarter":4,
-                 "score":10
-              }
-           ],
-           "is_at_home":False,
-           "is_winner":False
-        },
-        "team_2":{
-           "team_id":4,
-           "location":"Hamilton",
-           "nickname":"Tiger-Cats",
-           "abbreviation":"HAM",
-           "score":37,
-           "venue_id":4,
-           "linescores":[
-              {
-                 "quarter":1,
-                 "score":7
-              },
-              {
-                 "quarter":2,
-                 "score":13
-              },
-              {
-                 "quarter":3,
-                 "score":14
-              },
-              {
-                 "quarter":4,
-                 "score":3
-              }
-           ],
-           "is_at_home":True,
-           "is_winner":True
-        }
-     },
-     {
-        "game_id":2173,
-        "date_start":"2015-06-09T19:30:00-04:00",
-        "game_number":2,
-        "week":2,
-        "season":2015,
-        "attendance":5000,
-        "event_type":{
-           "event_type_id":0,
-           "name":"Preseason",
-           "title":""
-        },
-        "event_status":{
-           "event_status_id":4,
-           "name":"Final",
-           "is_active":False,
-           "quarter":4,
-           "minutes":0,
-           "seconds":0,
-           "down":1,
-           "yards_to_go":10
-        },
-        "venue":{
-           "venue_id":10,
-           "name":"Toronto: Varsity Stadium"
-        },
-        "weather":{
-           "temperature":16,
-           "sky":"Cloudy",
-           "wind_speed":"",
-           "wind_direction":"5 km per  hour",
-           "field_conditions":"Dry, artificial turf"
-        },
-        "coin_toss":{
-           "coin_toss_winner":"",
-           "coin_toss_winner_election":"Coin toss: Toronto won the toss and elected to receive."
-        },
-        "tickets_url":"http:\/\/www.argonauts.ca\/tickets\/",
-        "team_1":{
-           "team_id":9,
-           "location":"Winnipeg",
-           "nickname":"Blue Bombers",
-           "abbreviation":"WPG",
-           "score":34,
-           "venue_id":9,
-           "linescores":[
-              {
-                 "quarter":1,
-                 "score":3
-              },
-              {
-                 "quarter":2,
-                 "score":10
-              },
-              {
-                 "quarter":3,
-                 "score":14
-              },
-              {
-                 "quarter":4,
-                 "score":7
-              }
-           ],
-           "is_at_home":False,
-           "is_winner":True
-        },
-        "team_2":{
-           "team_id":8,
-           "location":"Toronto",
-           "nickname":"Argonauts",
-           "abbreviation":"TOR",
-           "score":27,
-           "venue_id":8,
-           "linescores":[
-              {
-                 "quarter":1,
-                 "score":6
-              },
-              {
-                 "quarter":2,
-                 "score":0
-              },
-              {
-                 "quarter":3,
-                 "score":8
-              },
-              {
-                 "quarter":4,
-                 "score":13
-              }
-           ],
-           "is_at_home":True,
-           "is_winner":False
-        }
-     },
-     # ... games continue ... 
-  ],
-  "errors":[
+REQUEST_TIMEOUT = 5
+NETWORK_RETRY_SLEEP_TIME = 10.0
 
-  ],
-  "meta":{
-     "copyright":"Copyright 2017 Canadian Football League."
-  }
-}
+# get current datetime
+CURRENT_DATE = datetime.today()
+ISO_CURRENT_DATE = CURRENT_DATE.isoformat()
 
-    if data:
-        games = []
-        for game in data['data']:
-            output = {
-                'id': game['game_id'],  # ID of the game
-                'date': game['date_start'],  # Date and time of the game
-                'home_team_abbrev': game['team_2']['abbreviation'],  # Home team name abbreviation
-                'home_team_name': game['team_2']['nickname'],  # Home team name
-                'home_team_id': game['team_2']['team_id'],  # ID of the Home team
-                'home_score': int(game['team_2']['score']),  # Home team goals
-                'away_team_abbrev': game['team_1']['abbreviation'],  # Away team name abbreviation
-                'away_team_id': game['team_1']['team_id'],  # ID of the Away team
-                'away_team_name': game['team_1']['nickname'],  # Away team name
-                'away_score': int(game['team_1']['score']),  # Away team goals
-                'down': game['event_status']['down'],   # Current down.
-                'spot': game['event_status']['yards_to_go'],   # Current yards to go.
-                'time': f"{game['event_status']}:{game['event_status']['seconds']}",
-                'quarter': game['event_status']['quarter'],
-                'over': bool(not game['event_status']['is_active']),
-                'redzone': game['event_status']['yards_to_go'] <= 20,
-                # playbyplay, boxscores, possession to be added to get_single_game data! 
-                # 'possession': game['play_by_play'][0]['team_abbreviation'],
-                'game_type': game['event_type']['name'],  # Preseason, Regular Season, Playoffs, Grey Cup, Exhibition
-                'state': game['event_status']['name'],   # State of the game.
-                'week': int(game['week']),
-                'season': int(game['season']),
-                'attendance': int(game['attendance']),
-            }
+BASE_URL = "http://api.cfl.ca"
+GAME_OVERVIEW_URL = "{base}/v1/games?filter[game_id][eq]={game_id}&include=boxscore,play_by_play" + API_KEY
+SCHEDULE_URL = "{base}/v1/games?filter[date_start][eq]={day}" + API_KEY
+SEASON_URL = "{base}/v1/seasons" + API_KEY
+STANDINGS_URL = "{base}/v1/standings/{year}" + API_KEY
+XO_STANDINGS_URL = "{base}/v1/standings/crossover/{year}" + API_KEY
+PLAYER_URL = "{base}/v1/players/{player_id}" + API_KEY
+TEAMS_URL = "{base}/v1/teams" + API_KEY
 
-            # put this dictionary into the larger dictionary
-            games.append(output)
-        return games
-    else:
-        return []
-    
+# STATUS_URL = 
+# Possible CFL game Statuses
+''' CFL
+    1: Pre-Game
+    2: In-Progress
+    4: Final
+    6: Postponed
+    9: Cancelled
+'''
+
+
+# Possible CFL Event Types
+'''
+    0: Preseason
+    1: Regular Season
+    2: Playoffs
+    3: Grey Cup
+    4: Exhibition
+'''
+TESTING = True
+
+# Ref: SCHEDULE_URL = "{base}/v1/games?filter[date_start][ge]={day}" + API_KEY
+# Note: USED DAY. Will need filtering for this in CFL.
+def get_all_games(day=ISO_CURRENT_DATE):
+   try:
+      if not TESTING:
+         data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day), timeout=REQUEST_TIMEOUT)
+      data = { "data": [
+            {
+               "game_id":2172,
+               "date_start":"2015-06-08T19:30:00-04:00",
+               "game_number":1,
+               "week":1,
+               "season":2015,
+               "attendance":0,
+               "event_type":{
+                  "event_type_id":0,
+                  "name":"Preseason",
+                  "title":""
+               },
+               "event_status":{
+                  "event_status_id":4,
+                  "name":"Final",
+                  "is_active":False,
+                  "quarter":4,
+                  "minutes":0,
+                  "seconds":0,
+                  "down":3,
+                  "yards_to_go":13
+               },
+               "venue":{
+                  "venue_id":4,
+                  "name":"Tim Hortons Field"
+               },
+               "weather":{
+                  "temperature":21,
+                  "sky":"Overcast",
+                  "wind_speed":"",
+                  "wind_direction":"6km\/h SW",
+                  "field_conditions":"Dry"
+               },
+               "coin_toss":{
+                  "coin_toss_winner":"",
+                  "coin_toss_winner_election":"Ottawa won coin toss and elected to receive."
+               },
+               "tickets_url":"http:\/\/www.ticats.ca\/tickets\/",
+               "team_1":{
+                  "team_id":6,
+                  "location":"Ottawa",
+                  "nickname":"Redblacks",
+                  "abbreviation":"OTT",
+                  "score":10,
+                  "venue_id":6,
+                  "linescores":[
+                     {
+                        "quarter":1,
+                        "score":0
+                     },
+                     {
+                        "quarter":2,
+                        "score":0
+                     },
+                     {
+                        "quarter":3,
+                        "score":0
+                     },
+                     {
+                        "quarter":4,
+                        "score":10
+                     }
+                  ],
+                  "is_at_home":False,
+                  "is_winner":False
+               },
+               "team_2":{
+                  "team_id":4,
+                  "location":"Hamilton",
+                  "nickname":"Tiger-Cats",
+                  "abbreviation":"HAM",
+                  "score":37,
+                  "venue_id":4,
+                  "linescores":[
+                     {
+                        "quarter":1,
+                        "score":7
+                     },
+                     {
+                        "quarter":2,
+                        "score":13
+                     },
+                     {
+                        "quarter":3,
+                        "score":14
+                     },
+                     {
+                        "quarter":4,
+                        "score":3
+                     }
+                  ],
+                  "is_at_home":True,
+                  "is_winner":True
+               }
+            },
+            {
+               "game_id":2173,
+               "date_start":"2015-06-09T19:30:00-04:00",
+               "game_number":2,
+               "week":2,
+               "season":2015,
+               "attendance":5000,
+               "event_type":{
+                  "event_type_id":0,
+                  "name":"Preseason",
+                  "title":""
+               },
+               "event_status":{
+                  "event_status_id":4,
+                  "name":"Final",
+                  "is_active":False,
+                  "quarter":4,
+                  "minutes":0,
+                  "seconds":0,
+                  "down":1,
+                  "yards_to_go":10
+               },
+               "venue":{
+                  "venue_id":10,
+                  "name":"Toronto: Varsity Stadium"
+               },
+               "weather":{
+                  "temperature":16,
+                  "sky":"Cloudy",
+                  "wind_speed":"",
+                  "wind_direction":"5 km per  hour",
+                  "field_conditions":"Dry, artificial turf"
+               },
+               "coin_toss":{
+                  "coin_toss_winner":"",
+                  "coin_toss_winner_election":"Coin toss: Toronto won the toss and elected to receive."
+               },
+               "tickets_url":"http:\/\/www.argonauts.ca\/tickets\/",
+               "team_1":{
+                  "team_id":9,
+                  "location":"Winnipeg",
+                  "nickname":"Blue Bombers",
+                  "abbreviation":"WPG",
+                  "score":34,
+                  "venue_id":9,
+                  "linescores":[
+                     {
+                        "quarter":1,
+                        "score":3
+                     },
+                     {
+                        "quarter":2,
+                        "score":10
+                     },
+                     {
+                        "quarter":3,
+                        "score":14
+                     },
+                     {
+                        "quarter":4,
+                        "score":7
+                     }
+                  ],
+                  "is_at_home":False,
+                  "is_winner":True
+               },
+               "team_2":{
+                  "team_id":8,
+                  "location":"Toronto",
+                  "nickname":"Argonauts",
+                  "abbreviation":"TOR",
+                  "score":27,
+                  "venue_id":8,
+                  "linescores":[
+                     {
+                        "quarter":1,
+                        "score":6
+                     },
+                     {
+                        "quarter":2,
+                        "score":0
+                     },
+                     {
+                        "quarter":3,
+                        "score":8
+                     },
+                     {
+                        "quarter":4,
+                        "score":13
+                     }
+                  ],
+                  "is_at_home":True,
+                  "is_winner":False
+               }
+            },
+            # ... games continue ... 
+         ],
+         "errors":[
+      
+         ],
+         "meta":{
+            "copyright":"Copyright 2017 Canadian Football League."
+         }
+      }
+
+      
+      if TESTING:
+         sched = data
+      else:
+         sched = data.json()
+      
+      if len(sched['errors']) > 0:
+            errors = []
+            for error in sched['errors']:
+               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+            raise ValueError(errors)
+         
+      games = []
+      for game in sched['data']:
+         output = {
+               'id': game['game_id'],  # ID of the game
+               'date': game['date_start'],  # Date and time of the game
+               'home_team_abbrev': game['team_2']['abbreviation'],  # Home team name abbreviation
+               'home_team_name': game['team_2']['nickname'],  # Home team name
+               'home_team_id': game['team_2']['team_id'],  # ID of the Home team
+               'home_score': int(game['team_2']['score']),  # Home team goals
+               'away_team_abbrev': game['team_1']['abbreviation'],  # Away team name abbreviation
+               'away_team_id': game['team_1']['team_id'],  # ID of the Away team
+               'away_team_name': game['team_1']['nickname'],  # Away team name
+               'away_score': int(game['team_1']['score']),  # Away team goals
+               'down': game['event_status']['down'],   # Current down.
+               'spot': game['event_status']['yards_to_go'],   # Current yards to go.
+               'time': f"{game['event_status']}:{game['event_status']['seconds']}",
+               'quarter': game['event_status']['quarter'],
+               'over': bool(not game['event_status']['is_active']),
+               'redzone': game['event_status']['yards_to_go'] <= 20,
+               'game_type': game['event_type']['name'],  # Preseason, Regular Season, Playoffs, Grey Cup, Exhibition
+               'state': game['event_status']['name'],   # State of the game.
+               'week': int(game['week']),
+               'season': int(game['season']),
+               'attendance': int(game['attendance']),
+         }
+         # put this dictionary into the larger dictionary
+         games.append(output)
+      return games
+   except requests.exceptions.RequestException as e:
+      debug.error(e)
+      raise ValueError(e)
+
+
+
+# Ref: SEASON_URL = "{base}/v1/seasons"
+def get_current_season():
+   try:
+      data = requests.get(SEASON_URL.format(base=BASE_URL), timeout=REQUEST_TIMEOUT)
+      cs = data.json()
+      if len(cs['errors']) > 0:
+            errors = []
+            for error in cs['errors']:
+               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+            raise ValueError(errors)
+      return cs['data']['current']['season']
+   except requests.exceptions.RequestException as e:
+      raise ValueError(e)
+
+# Ref: SEASON_URL = "{base}/v1/seasons"
+def get_current_week():
+   try:
+      data = requests.get(SEASON_URL.format(base=BASE_URL), timeout=REQUEST_TIMEOUT)
+      cw = data.json()
+      if len(cw['errors']) > 0:
+            errors = []
+            for error in cw['errors']:
+               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+            raise ValueError(errors)
+      return cw['data']['current']['week']
+   except requests.exceptions.RequestException as e:
+      raise ValueError(e)
+
+# Ref: TEAMS_URL = "{base}/v1/teams"
+def get_teams():
+   try:
+      data = requests.get(TEAMS_URL.format(base=BASE_URL), timeout=REQUEST_TIMEOUT)
+      teams = data.json()
+      if len(teams['errors']) > 0:
+            errors = []
+            for error in teams['errors']:
+               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+            raise ValueError(errors)
+      return teams['data']
+   except requests.exceptions.RequestException as e:
+      raise ValueError(e)
+
+# Ref: PLAYER_URL = "{base}/v1/players/{player_id}"
+def get_player(cfl_central_id):
+   try:
+      data = requests.get(PLAYER_URL.format(base=BASE_URL, player_id=cfl_central_id), timeout=REQUEST_TIMEOUT)
+      player = data.json()
+      if len(player['errors']) > 0:
+            errors = []
+            for error in player['errors']:
+               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+            raise ValueError(errors)
+      return player['data']
+   except requests.exceptions.RequestException as e:
+      raise ValueError(e)
+
+# Ref: GAME_OVERVIEW_URL = "{base}/v1/games?filter[game_id][eq]={game_id}&include=boxscore,play_by_play" + API_KEY
+# Game Overview
+def get_overview(game_id):
+   try:
+      data = requests.get(GAME_OVERVIEW_URL.format(base=BASE_URL, game_id=game_id), timeout=REQUEST_TIMEOUT)
+      game = data.json()
+      if len(game['errors']) > 0:
+            errors = []
+            for error in game['errors']:
+               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+            raise ValueError(errors)
+      for game in game['data'][0]:
+         output = {
+               'id': game['game_id'],  # ID of the game
+               'date': game['date_start'],  # Date and time of the game
+               'home_team_abbrev': game['team_2']['abbreviation'],  # Home team name abbreviation
+               'home_team_name': game['team_2']['nickname'],  # Home team name
+               'home_team_id': game['team_2']['team_id'],  # ID of the Home team
+               'home_score': int(game['team_2']['score']),  # Home team goals
+               'away_team_abbrev': game['team_1']['abbreviation'],  # Away team name abbreviation
+               'away_team_id': game['team_1']['team_id'],  # ID of the Away team
+               'away_team_name': game['team_1']['nickname'],  # Away team name
+               'away_score': int(game['team_1']['score']),  # Away team goals
+               'down': game['event_status']['down'],   # Current down.
+               'spot': game['event_status']['yards_to_go'],   # Current yards to go.
+               'time': f"{game['event_status']}:{game['event_status']['seconds']}",
+               'quarter': game['event_status']['quarter'],
+               'over': bool(not game['event_status']['is_active']),
+               'redzone': game['event_status']['yards_to_go'] <= 20,
+               'game_type': game['event_type']['name'],  # Preseason, Regular Season, Playoffs, Grey Cup, Exhibition
+               'state': game['event_status']['name'],   # State of the game.
+               'week': int(game['week']),
+               'season': int(game['season']),
+               'attendance': int(game['attendance']),
+               'boxscore': dict(game['boxscore']),
+               'play_by_play': dict(game['play_by_play']),
+         }
+         # put this dictionary into the larger dictionary
+      return output
+   except requests.exceptions.RequestException as e:
+      raise ValueError(e)
+
+# Ref: STANDINGS_URL = "{base}/v1/standings/{year}"
+# def get_standings(year=get_current_season()):
+#     try:
+#         data = requests.get(STANDINGS_URL.format(base=BASE_URL, year=year), timeout=REQUEST_TIMEOUT)
+#         standings = data.json()
+#         if len(standings['errors']) > 0:
+#             errors = []
+#             for error in standings['errors']:
+#                 errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+#             raise ValueError(errors)
+#         return standings['data']
+#     except requests.exceptions.RequestException as e:
+#         raise ValueError(e)
+
+# Ref: STANDINGS_URL = "{base}/v1/standings/crossover/{year}"
+# def get_standings_crossover(year=2014, data=xo):
+#     try:
+#         # data = requests.get(XO_STANDINGS_URL.format(base=BASE_URL, year=year), timeout=REQUEST_TIMEOUT)
+#         xo = data
+#         if len(xo['errors']) > 0:
+#             errors = []
+#             for error in xo['errors']:
+#                 errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+#             raise ValueError(errors)
+#         return xo['data']
+#     except requests.exceptions.RequestException as e:
+#         raise ValueError(e)
+   
