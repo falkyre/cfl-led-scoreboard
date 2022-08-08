@@ -257,8 +257,8 @@ def get_all_games(day=ISO_CURRENT_DATE):
       }
       
       sched = data
-
-      if TESTING is False:
+      
+      if not TESTING:
          data = requests.get(SCHEDULE_URL.format(base=BASE_URL, day=day, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
          sched = data.json()
             

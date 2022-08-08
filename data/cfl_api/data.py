@@ -50,7 +50,7 @@ class Data:
                     break
                 except ValueError as e:
                     self.network_issues = True
-                    debug.error(f"Error refreshing master list of games. {e} retries remaining.")
+                    debug.error(f"Error refreshing master list of games. {attempts_remaining} retries remaining.")
                     debug.error(f"Error(s): {e}")
                     attempts_remaining -= 1
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
