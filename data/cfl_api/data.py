@@ -83,7 +83,7 @@ class Data:
                     attempts_remaining -= 1
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
 
-    #     # If we run out of retries, just move on to the next game
+        # If we run out of retries, just move on to the next game
         if attempts_remaining <= 0 and self.config.rotation_enabled:
             self.advance_to_next_game()
 
@@ -95,35 +95,12 @@ class Data:
     def current_game(self):
         return self.games[self.current_game_index]
 
-    # def update_scores(self, homescore, awayscore):
-    #     self.scores[self.current_game_index] = {'home': homescore, 'away': awayscore}
-
-    # def get_current_scores(self):
-    #     if self.scores[self.current_game_index]:
-    #         return self.scores[self.current_game_index]
-    #     else:
-    #         return {'home': 0, 'away': 0}
-
     def advance_to_next_game(self):
         self.current_game_index = self.__next_game_index()
         return self.current_game()
 
-    # def game_index_for_preferred_team(self):
-    #     if self.config.preferred_teams:
-    #         return self.__game_index_for(self.config.preferred_teams[0])
-    #     else:
-    #         return 0
-
     def __filter_list_of_games(self, games, teams):
         return list(game for game in games if set([game['away_team_abbrev'], game['home_team_abbrev']]).intersection(set(teams)))
-
-    # def __game_index_for(self, team_name):
-    #     team_index = 0
-    #     print(self.games)
-    #     # team_idxs = [i for i, game in enumerate(self.games) if team_name in [game.awayteam, game.hometeam]]
-    #     for game in enumerate(self.games):
-    #         print(game)
-    #     return team_index
 
     def __next_game_index(self):
         counter = self.current_game_index + 1
