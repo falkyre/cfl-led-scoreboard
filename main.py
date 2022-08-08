@@ -1,5 +1,5 @@
-from data.nfl_api.data import Data
-from data.nfl_api.scoreboard_config import ScoreboardConfig
+from data.cfl_api.data import Data
+from data.cfl_api.scoreboard_config import ScoreboardConfig
 from renderer.main import MainRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options

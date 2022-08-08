@@ -75,10 +75,10 @@ class MainRenderer:
             return False
 
         stay_on_preferred_team = self.data.config.preferred_teams and not self.data.config.rotation_preferred_team_live_enabled
-        if stay_on_preferred_team == False:
-            return True
-        else:
+        if stay_on_preferred_team is True:
             return False
+
+        return True
 
         # figure this out later heh
         # showing_preferred_team = self.data.config.preferred_teams[0] in [game.awayteam, game.hometeam]

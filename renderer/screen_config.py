@@ -1,8 +1,6 @@
 from utils import get_file
 import json
 import os
-import sys
-import debug
 
 class screenConfig:
     def __init__(self, filename_base):

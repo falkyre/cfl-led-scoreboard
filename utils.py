@@ -6,6 +6,7 @@ import pytz
 from tzlocal import get_localzone
 from rgbmatrix import RGBMatrixOptions, graphics
 import debug
+
 # get local timezone
 local_tz = get_localzone()
 
