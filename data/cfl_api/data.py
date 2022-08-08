@@ -115,7 +115,7 @@ class Data:
 
     def get_gametime(self):
         tz_diff = t.timezone if (t.localtime().tm_isdst == 0) else t.altzone
-        gametime = datetime.strptime(self.games[self.current_game_index]['date'], "%Y-%m-%dT%H:%MZ") + timedelta(hours=(tz_diff / 60 / 60 * -1))
+        gametime = datetime.strptime(self.games[self.current_game_index]['date'], "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=(tz_diff / 60 / 60 * -1))
         return gametime
 
     def current_game(self):
@@ -167,7 +167,7 @@ class Data:
     #         return 0
 
     def __filter_list_of_games(self, games, teams):
-        return list(game for game in games if set([game['awayteam'], game['hometeam']]).intersection(set(teams)))
+        return list(game for game in games if set([game['away_team_abbrev'], game['home_team_abbrev']]).intersection(set(teams)))
 
     # def __game_index_for(self, team_name):
     #     team_index = 0
@@ -182,15 +182,6 @@ class Data:
         if counter >= len(self.games):
             counter = 0
         return counter
-
-    #
-    # Debug info
-
-    def print_overview_debug(self):
-        debug.log("Overview Refreshed: {}".format(self.overview.id))
-        debug.log("Pre: {}".format(Pregame(self.overview, self.config.time_format)))
-        debug.log("Live: {}".format(Scoreboard(self.overview)))
-        debug.log("Final: {}".format(Final(self.current_game())))
 
     # Ref: SEASON_URL = "{base}/v1/seasons"
     def get_current_season():
