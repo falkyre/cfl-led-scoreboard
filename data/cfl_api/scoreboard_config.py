@@ -46,7 +46,7 @@ class ScoreboardConfig:
             try:
                 rate = float(self.rotation_rates)
                 self.rotation_rates = {"live": rate, "final": rate, "pregame": rate}
-            except:
+            except Exception:
                 debug.warning("rotation_rates should be a Dict or Float. Using default value. {}".format(DEFAULT_ROTATE_RATES))
                 self.rotation_rates = DEFAULT_ROTATE_RATES
 

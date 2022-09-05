@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from dateutil import parser
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
 from rgbmatrix import graphics
+from data.cfl_api import cfl_api_parser
 from utils import center_text
 from renderer.screen_config import screenConfig
 import debug
@@ -29,9 +30,11 @@ class MainRenderer:
             self.starttime = t.time()
             self.data.get_current_date()
             self.__render_game()
+#            self._draw_post_game()
 
     def __render_game(self):
         while True:
+            debug.info("Starting render.")
             # If we need to refresh the overview data, do that
             if self.data.needs_refresh:
                 self.data.refresh_games()
@@ -70,31 +73,28 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        if self.data.config.rotation_enabled == False:
-            return False
-
-        stay_on_preferred_team = self.data.config.preferred_teams and not self.data.config.rotation_preferred_team_live_enabled
-        if stay_on_preferred_team is True:
-            return False
-
-        return True
+        game_details = cfl_api_parser.get_overview(game['id'])
+        halftime_rotate = game_details['play_by_play'][-1]['play_result_type_id'] == 8 and self.data.config.rotation_preferred_team_live_halftime
+        return self.data.config.rotation_enabled and (self.data.config.rotation_preferred_team_live_enabled and halftime_rotate)
 
     def __draw_game(self, game):
         time = self.data.get_current_date()
         gamedatetime = self.data.get_gametime()
+        game = cfl_api_parser.get_overview(game['id'])
         if time < gamedatetime - timedelta(hours=1) and game['state'] == 'Pre-Game':
-            debug.info('Pre-Game State')
+            debug.info('State: Pre-Game')
             self._draw_pregame(game)
         elif time < gamedatetime and game['state'] == 'Pre-Game':
             debug.info('Countdown til gametime')
             self._draw_countdown(game)
         elif game['state'] == 'Final':
-            debug.info('Final State')
+            debug.info('State: Post-Game')
             self._draw_post_game(game)
         else:
-            debug.info('Live State, checking every 5s')
+            debug.info('State: Live Game, checking every 5s')
             self._draw_live_game(game)
-        debug.info('ping render_game')
+        debug.info('Drawing game. __draw_game()')
+        debug.info(game)
 
     def _draw_pregame(self, game):
             time = self.data.get_current_date()
