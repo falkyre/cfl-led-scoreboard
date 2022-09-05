@@ -1,6 +1,8 @@
-# WORK IN PROGESS - cfl-led-scoreboard
+# cfl-led-scoreboard
 
 Display your favourite CFL team score on an Raspberry Pi powered LED matrix. Currently supports 64x32 boards only.
+
+__Note:__ A personal [CFL API key](https://api.cfl.ca/key-request) is required.
 
 ### Credit and inpsiration
 
@@ -34,9 +36,8 @@ TODO.
 
 ## Roadmap
 
-* Finalize CFL API
-* Convert from NFL to CFL
-* Implement basic states.
+* Finalize CFL API and ensure rate limits.
+* Improve Down and YTG Display, + Possession.
 
 ## Installation
 
@@ -65,6 +66,11 @@ cd cfl-led-scoreboard/
 sudo chmod +x scripts/install.sh
 python3 -m venv env && source env/bin/activate
 sudo ./scripts/install.sh
+```
+
+_Be sure to replace `your_api_key` with your personal API key_:
+```
+echo 'CFL_API_KEY = your_api_key' > .env
 ```
 
 [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building): The open-source library that allows the Raspberry Pi to render on the LED matrix.
