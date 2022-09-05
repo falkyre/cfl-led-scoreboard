@@ -15,7 +15,6 @@
 			"during_halftime": false
 		}
 	},
-    "scrolling_speed": 15,
     "debug": true,
     "testing": false
 }

@@ -4,7 +4,6 @@ from utils import get_file
 import debug
 
 DEFAULT_PREFERRED_TEAMS = ["BC", "HAM"]
-DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
@@ -23,7 +22,6 @@ class ScoreboardConfig:
         self.rotation_rates = json["rotation"]["rates"]
         self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
         self.rotation_preferred_team_live_halftime = json["rotation"]["while_preferred_team_live"]["during_halftime"]
-        self.scrolling_speed = json["scrolling_speed"]
 
         # Debug
         self.debug = json["debug"]
