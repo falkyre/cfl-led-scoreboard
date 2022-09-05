@@ -38,6 +38,7 @@ TODO.
 
 * Finalize CFL API and ensure rate limits.
 * Improve Down and YTG Display, + Possession.
+* Test TD, FG, and other play display/rendering.
 
 ## Installation
 
