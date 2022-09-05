@@ -28,39 +28,38 @@ class MainRenderer:
             self.starttime = t.time()
             self.data.get_current_date()
             self.__render_game()
-#            self._draw_post_game()
 
     def __render_game(self):
         while True:
             debug.info("Starting render.")
             # If we need to refresh the overview data, do that
-            if self.data.needs_refresh:
-                self.data.refresh_games()
+            #if self.data.needs_refresh:
+            #    self.data.refresh_games()
                 
             basic_game = self.data.games[self.data.current_game_index]
 
-            # Draw the current game
-            self.__draw_game(basic_game)
-
             # Set the refresh rate
             rotate_rate = self.__rotate_rate_for_game(basic_game)
-            t.sleep(rotate_rate)
             endtime = t.time()
             time_delta = endtime - self.starttime
 
-            # If we're ready to rotate, let's do it
-            # fix this u idiot
             if time_delta >= rotate_rate and self.data.needs_refresh:
                 self.starttime = t.time()
                 self.data.needs_refresh = True
                 debug.info("Needs refresh!")
 
-            if self.__should_rotate_to_next_game(self.data.games[self.data.current_game_index]):
+            if self.__should_rotate_to_next_game(basic_game):
+                if self.data.needs_refresh:
+                    self.data.refresh_games()
                 return self.data.advance_to_next_game()
 
             if endtime - self.data.games_refresh_time >= rotate_rate:
-                self.data.refresh_games()
+                self.data.needs_refresh = True
+                debug.info("Needs refresh!")
 
+            # Draw the current game
+            self.__draw_game(basic_game)
+            t.sleep(rotate_rate)
 
     def __rotate_rate_for_game(self, game):
         if game['state'] == 'Pre-Game':
@@ -75,13 +74,14 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        debug.info(f"__should_rotate_to_next_game({game})")
         #game_details = cfl_api_parser.get_overview(game['id'])
         #halftime_rotate = game_details['play_by_play'][-1]['play_result_type_id'] == 8 and self.data.config.rotation_preferred_team_live_halftime
-        return self.data.config.rotation_enabled and self.data.config.rotation_preferred_team_live_enabled
+        live_game_preferred = not self.data.showing_preferred_game() and self.data.config.rotation_preferred_team_live_enabled
+        debug.info(f"__should_rotate_to_next_game? - {self.data.config.rotation_enabled and live_game_preferred}")
+        return self.data.config.rotation_enabled and live_game_preferred
 
     def __draw_game(self, game):
-        debug.info('Drawing game. __draw_game()')
+        debug.info(f'Drawing game. __draw_game({game["id"]})')
 
         if game['state'] == 'Final':
             debug.info('State: Post-Game')
@@ -258,6 +258,8 @@ class MainRenderer:
         # Refresh the Data image.
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
+        
+        self.data.needs_refresh = False
 
     def _draw_td(self):
         debug.info('TD')

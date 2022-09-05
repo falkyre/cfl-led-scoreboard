@@ -1,6 +1,6 @@
 {
 	"preferred": {
-		"teams": ["BUF", "NO", "TB"]
+		"teams": ["HAM", "BC"]
 	},
 	"rotation": {
 		"enabled": true,
@@ -15,7 +15,6 @@
 			"during_halftime": false
 		}
 	},
-    "scrolling_speed": 2,
     "debug": "true",
 	"testing": "false"
 }

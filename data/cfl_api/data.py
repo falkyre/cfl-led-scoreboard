@@ -23,8 +23,8 @@ class Data:
         # Fetch the teams info
         self.refresh_games()
         # self.refresh_games(self.current_game()['id'])
-        #self.showing_preferred_game()
-        #self.showing_preferred_game()
+        
+        self.showing_preferred_game()
 
         # TODO: self.playoffs = cflparser.is_playoffs()
 
@@ -41,10 +41,10 @@ class Data:
                     all_games = [game for game in cflparser.get_all_games()]
 
                     if self.config.rotation_only_preferred:
-                        self.games = self.__filter_list_of_games(all_games, [self.config.preferred_teams[0]])
-                        debug.info(f'Filtering games for preferred team - {self.config.preferred_teams[0]}')
+                        self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
+                        debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
 
-                    elif self.config.rotation_enabled:
+                    elif not self.config.rotation_only_preferred and not self.config.rotation_preferred_team_live_enabled:
                         self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
                         debug.info(f'Filtering games for preferred teams - {self.config.preferred_teams}')
                         
@@ -107,18 +107,28 @@ class Data:
             current_game = cflparser.get_overview(game_id=self.games[self.current_game_index]['id'])
             return current_game
 
-    # figure this out later heh
     def showing_preferred_game(self):
-        showing_preferred_team = self.config.preferred_teams[0] in [self.current_game()['home_team_abbrev'], self.current_game()['away_team_abbrev']]
-        if self.current_game is not None and showing_preferred_team and self.game['state'] == 'In-Progress':
-            debug.info("showing_preferred_game = true")
+        current_game = self.games[self.current_game_index]
+        next_game = self.games[self.__next_game_index()]
+        preferred_next_game = self.config.preferred_teams[0] in [next_game['home_team_abbrev'], next_game['away_team_abbrev']] and next_game['state'] == 'In-Progress'
+        showing_preferred_team = False
+        
+        if len(self.config.preferred_teams) > 1:
+            for team in self.config.preferred_teams:
+                if team in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress' and not preferred_next_game:
+                    showing_preferred_team = True
+        else:
+            if self.config.preferred_teams[0] in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
+                    showing_preferred_team = True
+            
+        if current_game is not None and showing_preferred_team:
+            debug.info("showing_preferred_game = true(Live!)")
             return True
-        debug.info("showing_preferred_game = false")
+        debug.info("showing_preferred_game = false (Not live.)")
         return False
 
     def advance_to_next_game(self):
         self.current_game_index = self.__next_game_index()
-        return self.current_game()
 
     def __filter_list_of_games(self, games, teams):
         filtered_games = [game for game in games if set([game['away_team_abbrev'], game['home_team_abbrev']]).intersection(set(teams))]
