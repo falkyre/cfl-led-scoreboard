@@ -51,18 +51,16 @@ class MainRenderer:
 
             # If we're ready to rotate, let's do it
             # fix this u idiot
-            if time_delta >= rotate_rate:
+            if time_delta >= rotate_rate and self.data.needs_refresh:
                 self.starttime = t.time()
                 self.data.needs_refresh = True
 
-                if self.__should_rotate_to_next_game(self.data.current_game()):
-                    game = self.data.advance_to_next_game()
+                if self.__should_rotate_to_next_game(self.data.games[self.data.current_game_index]):
+                    return self.data.advance_to_next_game()
 
                 if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
                     self.data.refresh_games()
 
-                if self.data.needs_refresh:
-                    self.data.refresh_games()
 
     def __rotate_rate_for_game(self, game):
         rotate_rate = self.data.config.rotation_rates_live
@@ -78,9 +76,9 @@ class MainRenderer:
         return self.data.config.rotation_enabled and (self.data.config.rotation_preferred_team_live_enabled and halftime_rotate)
 
     def __draw_game(self, game):
+        debug.info('Drawing game. __draw_game()')
         time = self.data.get_current_date()
         gamedatetime = self.data.get_gametime()
-        game = cfl_api_parser.get_overview(game['id'])
         if time < gamedatetime - timedelta(hours=1) and game['state'] == 'Pre-Game':
             debug.info('State: Pre-Game')
             self._draw_pregame(game)
@@ -91,10 +89,8 @@ class MainRenderer:
             debug.info('State: Post-Game')
             self._draw_post_game(game)
         else:
-            debug.info('State: Live Game, checking every 5s')
+            debug.info(f'State: Live Game, checking every {self.__rotate_rate_for_game(game)}s')
             self._draw_live_game(game)
-        debug.info('Drawing game. __draw_game()')
-        debug.info(game)
 
     def _draw_pregame(self, game):
             time = self.data.get_current_date()

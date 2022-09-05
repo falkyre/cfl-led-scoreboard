@@ -14,7 +14,7 @@ Hey, neat-o! You can rotate through multiple games now if you want to! Will stil
 
 ### Pregame
 
-Currently shows the team logos and the game time. ![pregame](imgs/pregame.jpg)
+Currently shows the team logos and the game time. ![pregame](imgs/live_game.jpg)
 
 ### Live scoring updates
 
