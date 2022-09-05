@@ -14,11 +14,11 @@ Hey, neat-o! You can rotate through multiple games now if you want to! Will stil
 
 ### Pregame
 
-Currently shows the team logos and the game time. ![pregame](imgs/live_game.jpg)
+Currently shows the team logos and the game time.
 
 ### Live scoring updates
 
-The score updates every 3 seconds. The scoreboard will display, from top to bottom: quarter, time remaining in quarter, team with possession, down and yards to gain, and the position of the line of scrimmage. ![scoreboard](imgs/scoreboard.jpg) When a team is in the redzone, their name will light up red. ![rz](imgs/rz.jpg)
+The score updates every X (rotation_rate) seconds. The scoreboard will display, from top to bottom: quarter, time remaining in quarter, team with possession, down and yards to gain, and the position of the line of scrimmage. ![scoreboard](imgs/live_game.jpg) When a team is in the redzone, their name will light up red.
 
 ### Postgame
 
@@ -30,7 +30,7 @@ It displays a message that it's the off season. You should just turn it off and 
 
 ### Preseason
 
-Nothing yet because I didn't even think the season would start because of COVID.
+TODO.
 
 ## Roadmap
 

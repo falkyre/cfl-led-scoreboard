@@ -327,7 +327,7 @@ def get_current_season(year=CURRENT_YEAR):
 def get_current_week():
    try:
       req_url = SEASON_URL.format(base=BASE_URL, api_key=API_KEY)
-      debug.info(f'Fetching season info from: {req_url}')
+      debug.info(f'Fetching week info from: {req_url}')
       data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
       cs = data.json()
       if len(cs['errors']) > 0:
