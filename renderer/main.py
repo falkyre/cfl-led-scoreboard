@@ -43,14 +43,14 @@ class MainRenderer:
             self.__draw_game(basic_game)
 
             # Set the refresh rate
-            refresh_rate = self.__rotate_rate_for_game(basic_game)
-            t.sleep(refresh_rate)
+            rotate_rate = self.__rotate_rate_for_game(basic_game)
+            t.sleep(rotate_rate)
             endtime = t.time()
             time_delta = endtime - self.starttime
 
             # If we're ready to rotate, let's do it
             # fix this u idiot
-            if time_delta >= refresh_rate and self.data.needs_refresh:
+            if time_delta >= rotate_rate and self.data.needs_refresh:
                 self.starttime = t.time()
                 self.data.needs_refresh = True
                 debug.info("Needs refresh!")
@@ -58,7 +58,7 @@ class MainRenderer:
             if self.__should_rotate_to_next_game(self.data.games[self.data.current_game_index]):
                 return self.data.advance_to_next_game()
 
-            if endtime - self.data.games_refresh_time >= refresh_rate:
+            if endtime - self.data.games_refresh_time >= rotate_rate:
                 self.data.refresh_games()
 
 
