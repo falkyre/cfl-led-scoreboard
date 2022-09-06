@@ -41,6 +41,7 @@ class MainRenderer:
             # Set the refresh rate
             rotate_rate = self.__rotate_rate_for_game(basic_game)
             refresh_rate = self.data.config.data_refresh_rate
+            debug.info(f'Refresh rate: {refresh_rate}s')
 
             # Draw the current game
             self.__draw_game(basic_game)
@@ -66,13 +67,13 @@ class MainRenderer:
     def __rotate_rate_for_game(self, game):
         if game['state'] == 'Pre-Game':
             rotate_rate = self.data.config.rotation_rates_pregame
-            debug.info(f'Setting pre-game rotation rate: {rotate_rate}')
+            debug.info(f'Setting pre-game rotation rate: {rotate_rate}s')
         elif game['state'] == 'Final':
             rotate_rate = self.data.config.rotation_rates_final
-            debug.info(f'Setting post game rotation rate: {rotate_rate}')
+            debug.info(f'Setting post game rotation rate: {rotate_rate}s')
         else:
             rotate_rate = self.data.config.rotation_rates_live
-            debug.info(f'Setting rotation rate: {rotate_rate}')
+            debug.info(f'Setting rotation rate: {rotate_rate}s')
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
@@ -164,17 +165,17 @@ class MainRenderer:
             self.draw = ImageDraw.Draw(self.image)
             # t.sleep(1)
         else:
-            self._draw_game(game)
+            self.__draw_game(game)
 
     def _draw_live_game(self, game):
         homescore = '{0:02d}'.format(game['home_score'])
         awayscore = '{0:02d}'.format(game['away_score'])
 
         # Refresh the data
-        #if self.data.needs_refresh:
-            #debug.info('Refresh game overview')
-            #self.data.refresh_games()
-            #self.data.needs_refresh = False
+        if self.data.needs_refresh:
+            debug.info('Refresh game overview')
+            self.data.refresh_games()
+            self.data.needs_refresh = False
         # Use this code if you want the animations to run
         if game['home_score'] > int(homescore) + 5 or game['away_score'] > int(awayscore) + 5:
             debug.info('should draw TD')
@@ -186,25 +187,22 @@ class MainRenderer:
         # score = '{}-{}'.format(overview['away_score'], overview['home_score'])
         quarter = f"Q{game['quarter']}"
         time_period = game['time']
-        pos = None
-        down = None
-        spot = None
-        # FIX ME FOR CFL DATA SPEC - get from play_by_play from individual games data
-        #if game['possession'] == game['away_team_id']:
-        #    pos = game['away_team_abbrev']
-        #else:
-        #    pos = game['home_team_abbrev']
         pos_colour = (255, 255, 255)
         if game['redzone']:
             pos_colour = (255, 25, 25)
-        if game['down']:
-            down = f"DN: {game['down']}"
+        if game['possession']:
+            pos = game['possession']
+            info_pos = center_text(self.font_mini.getsize(str(pos))[0], 32)
+            self.draw.multiline_text((info_pos, 13), str(pos), fill=(pos_colour), font=self.font_mini, align="center")
+        if game['down'] and game['ytg']:
+            down = f"{game['down']}&{game['ytg']}"
             info_pos = center_text(self.font_mini.getsize(str(down))[0], 32)
             self.draw.multiline_text((info_pos, 19), str(down), fill=(pos_colour), font=self.font_mini, align="center")
         if game['spot']:
-            spot = f"YTG: {game['spot']}"
+            spot = f"{game['spot']}"
             info_pos = center_text(self.font_mini.getsize(spot)[0], 32)
             self.draw.multiline_text((info_pos, 25), spot, fill=(pos_colour), font=self.font_mini, align="center")
+        
         # Set the position of the information on screen.
         home_score_size = self.font.getsize(homescore)[0]
         time_period_pos = center_text(self.font_mini.getsize(time_period)[0], 32)
@@ -228,12 +226,14 @@ class MainRenderer:
 
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        
         # Refresh the Data image.
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
-        # Check if the game is over
+        
         self.data.needs_refresh = True
         
+        # Check if the game is over
         if game['state'] == 'Final':
             debug.info('GAME OVER')
             self.data.needs_refresh = False

@@ -37,7 +37,7 @@ class Data:
     
     def get_season_info(self):
         # Get current season & week
-        [self.current_season, self.current_week] = cflparser.get_current_season(self.current_week)
+        [self.current_season, self.current_week] = cflparser.get_current_season()
         
 
     def get_current_date(self):

@@ -4,7 +4,7 @@
 	},
 	"rotation": {
 		"enabled": true,
-		"only_preferred": true,
+		"only_preferred": false,
 		"rates": {
 			"pregame": 10.0,
 			"live": 10.0,

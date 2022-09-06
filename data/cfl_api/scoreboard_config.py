@@ -8,6 +8,7 @@ DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
 
+MINIMUM_REFRESH_RATE = 5
 
 class ScoreboardConfig:
     def __init__(self, filename_base, args):
@@ -23,7 +24,7 @@ class ScoreboardConfig:
         self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
 
         # Refresh Rate
-        self.data_refresh_rate = json["data_refresh_rate"]
+        self.data_refresh_rate = json["data_refresh_rate"] if json["data_refresh_rate"] >= MINIMUM_REFRESH_RATE else MINIMUM_REFRESH_RATE
         
         # Debug
         self.debug = json["debug"]

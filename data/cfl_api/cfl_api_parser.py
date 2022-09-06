@@ -34,27 +34,8 @@ XO_STANDINGS_URL = "{base}/v1/standings/crossover/{year}?key={api_key}"
 PLAYER_URL = "{base}/v1/players/{player_id}?key={api_key}"
 TEAMS_URL = "{base}/v1/teams?key={api_key}"
 
-# Possible CFL game Statuses
-''' CFL
-    1: Pre-Game
-    2: In-Progress
-    4: Final
-    6: Postponed
-    9: Cancelled
-'''
-
-# Possible CFL Event Types
-'''
-    0: Preseason
-    1: Regular Season
-    2: Playoffs
-    3: Grey Cup
-    4: Exhibition
-'''
-
 
 # Ref: SCHEDULE_URL = "{base}/v1/games?filter[date_start][ge]={day}" + API_KEY
-# Note: USED DAY. Will need filtering for this in CFL.
 def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
    try:
       data = { "data": [
@@ -412,9 +393,10 @@ def get_overview(game_id):
                
                'play_by_play': game['data'][0]['play_by_play'],
                'possession': game['data'][0]['play_by_play'][-1]['team_abbreviation'],
+               'spot': game['data'][0]['play_by_play'][-1]['field_position_end'],   # Current yards to go.
                'redzone': game['data'][0]['play_by_play'][-1]['is_in_red_zone'],
-               'down': game['data'][0]['event_status']['down'],   # Current down.
-               'spot': game['data'][0]['event_status']['yards_to_go'],   # Current yards to go.
+               'down': game['data'][0]['play_by_play'][-1]['down'],   # Current down.
+               'ytg': game['data'][0]['play_by_play'][-1]['yards_to_go'],   # Current yards to go.
                
                'home_team_abbrev': game['data'][0]['team_2']['abbreviation'],  # Home team name abbreviation
                'home_team_name': game['data'][0]['team_2']['nickname'],  # Home team name
@@ -431,32 +413,3 @@ def get_overview(game_id):
    
    except requests.exceptions.RequestException as e:
       raise ValueError(e)
-
-# Ref: STANDINGS_URL = "{base}/v1/standings/{year}"
-# def get_standings(year=get_current_season()):
-#     try:
-#         data = requests.get(STANDINGS_URL.format(base=BASE_URL, year=year, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
-#         standings = data.json()
-#         if len(standings['errors']) > 0:
-#             errors = []
-#             for error in standings['errors']:
-#                 errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
-#             raise ValueError(errors)
-#         return standings['data']
-#     except requests.exceptions.RequestException as e:
-#         raise ValueError(e)
-
-# Ref: STANDINGS_URL = "{base}/v1/standings/crossover/{year}"
-# def get_standings_crossover(year=2014, data=xo):
-#     try:
-#         # data = requests.get(XO_STANDINGS_URL.format(base=BASE_URL, year=year, api_key=API_KEY), timeout=REQUEST_TIMEOUT)
-#         xo = data
-#         if len(xo['errors']) > 0:
-#             errors = []
-#             for error in xo['errors']:
-#                 errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
-#             raise ValueError(errors)
-#         return xo['data']
-#     except requests.exceptions.RequestException as e:
-#         raise ValueError(e)
-   
