@@ -7,6 +7,7 @@ import dotenv
 import requests
 import debug
 from . import scoreboard_config as sb_config
+from . import data as Data
 from utils import args
 
 ENV = dotenv.dotenv_values('.env')
@@ -281,7 +282,6 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
                'season': game['season'],
                'attendance': game['attendance'],
                
-               
                'state': game['event_status']['name'],   # State of the game.
                'over': game['event_status']['is_active'],
                'quarter': game['event_status']['quarter'],
@@ -309,35 +309,48 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
 
 
 def get_current_season(year=CURRENT_YEAR):
-   try:
-      req_url = SEASON_URL.format(base=BASE_URL, year=year, api_key=API_KEY)
-      debug.info(f'Fetching season info from: {req_url}')
-      data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
-      cs = data.json()
-      if len(cs['errors']) > 0:
-            errors = []
-            for error in cs['errors']:
-               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
-            raise ValueError(errors)
-      return cs['data']['current']['season']
-   except requests.exceptions.RequestException as e:
-      raise ValueError(e)
+   if not hasattr(Data, 'current_season'):
+      try:
+         req_url = SEASON_URL.format(base=BASE_URL, year=year, api_key=API_KEY)
+         debug.info(f'Fetching season info from: {req_url}')
+         data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
+         cs = data.json()
+         
+         if len(cs['errors']) > 0:
+               errors = []
+               for error in cs['errors']:
+                  errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+               raise ValueError(errors)
+            
+         Data.current_season = cs['data']['current']['season']
+         return [cs['data']['current']['season'], cs['data']['current']['week']]
+      
+      except requests.exceptions.RequestException as e:
+         raise ValueError(e)
+   else:
+      debug.info(f'Found current season in data: {Data.current_season}')
+      return Data.current_season
 
 # Ref: SEASON_URL = "{base}/v1/seasons"
 def get_current_week():
-   try:
-      req_url = SEASON_URL.format(base=BASE_URL, api_key=API_KEY)
-      debug.info(f'Fetching week info from: {req_url}')
-      data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
-      cs = data.json()
-      if len(cs['errors']) > 0:
-            errors = []
-            for error in cs['errors']:
-               errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
-            raise ValueError(errors)
-      return cs['data']['current']['week']
-   except requests.exceptions.RequestException as e:
-      raise ValueError(e)
+   if not hasattr(Data, 'current_week'):
+      try:
+         req_url = SEASON_URL.format(base=BASE_URL, api_key=API_KEY)
+         debug.info(f'Fetching week info from: {req_url}')
+         data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
+         cs = data.json()
+         if len(cs['errors']) > 0:
+               errors = []
+               for error in cs['errors']:
+                  errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
+               raise ValueError(errors)
+         Data.current_week = cs['data']['current']['week']
+         return cs['data']['current']['week']
+      except requests.exceptions.RequestException as e:
+         raise ValueError(e)
+   else:
+      debug.info(f'Found current week in data: {Data.current_week}')
+      return Data.current_week
 
 # Ref: TEAMS_URL = "{base}/v1/teams"
 def get_teams():

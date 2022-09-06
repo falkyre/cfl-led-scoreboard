@@ -33,33 +33,35 @@ class MainRenderer:
         while True:
             debug.info("Starting render.")
             # If we need to refresh the overview data, do that
-            #if self.data.needs_refresh:
-            #    self.data.refresh_games()
-                
+            if self.data.needs_refresh:
+                self.data.refresh_games()
+
             basic_game = self.data.games[self.data.current_game_index]
 
             # Set the refresh rate
             rotate_rate = self.__rotate_rate_for_game(basic_game)
-            endtime = t.time()
-            time_delta = endtime - self.starttime
-
-            if time_delta >= rotate_rate and self.data.needs_refresh:
-                self.starttime = t.time()
-                self.data.needs_refresh = True
-                debug.info("Needs refresh!")
-
-            if self.__should_rotate_to_next_game(basic_game):
-                if self.data.needs_refresh:
-                    self.data.refresh_games()
-                return self.data.advance_to_next_game()
-
-            if endtime - self.data.games_refresh_time >= rotate_rate:
-                self.data.needs_refresh = True
-                debug.info("Needs refresh!")
+            refresh_rate = self.data.config.data_refresh_rate
 
             # Draw the current game
             self.__draw_game(basic_game)
             t.sleep(rotate_rate)
+            
+            endtime = t.time()
+            time_delta = endtime - self.starttime
+
+            if time_delta >= refresh_rate and self.data.needs_refresh:
+                self.starttime = t.time()
+                self.data.needs_refresh = True
+                debug.info("Needs refresh!")
+
+            if endtime - self.data.games_refresh_time >= refresh_rate:
+                self.data.needs_refresh = True
+                debug.info("Needs refresh!")
+            
+            if self.__should_rotate_to_next_game(basic_game):
+                if self.data.needs_refresh:
+                    self.data.refresh_games()
+                return self.data.advance_to_next_game()
 
     def __rotate_rate_for_game(self, game):
         if game['state'] == 'Pre-Game':

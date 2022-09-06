@@ -21,6 +21,10 @@ class ScoreboardConfig:
         self.rotation_only_preferred = json["rotation"]["only_preferred"]
         self.rotation_rates = json["rotation"]["rates"]
         self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
+
+        # Refresh Rate
+        self.data_refresh_rate = json["data_refresh_rate"]
+        
         # Debug
         self.debug = json["debug"]
         self.testing = json["testing"]

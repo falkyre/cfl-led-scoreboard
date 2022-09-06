@@ -16,6 +16,8 @@ class Data:
         # What game do we want to start on?
         self.current_game_index = 0
         self.current_division_index = 0
+        
+
 
         # Parse today's date and see if we should use today or yesterday
         self.get_current_date()
@@ -27,6 +29,16 @@ class Data:
         self.showing_preferred_game()
 
         # TODO: self.playoffs = cflparser.is_playoffs()
+        
+        self.current_week = None
+        self.current_season = None
+        self.get_season_info()
+        
+    
+    def get_season_info(self):
+        # Get current season & week
+        [self.current_season, self.current_week] = cflparser.get_current_season(self.current_week)
+        
 
     def get_current_date(self):
         return datetime.now(get_localzone())
