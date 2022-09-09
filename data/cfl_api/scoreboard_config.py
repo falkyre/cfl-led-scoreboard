@@ -12,6 +12,8 @@ class ScoreboardConfig:
             json = self.__get_config(filename_base)
             config = config_models.ConfigModel.parse_obj(json)
             
+            print("\n", config.schema_json(indent=2), "\n")
+            
             # Preferred Teams
             self.preferred_teams = config.preferred_teams
 

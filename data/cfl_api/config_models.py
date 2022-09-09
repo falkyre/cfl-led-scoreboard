@@ -1,5 +1,7 @@
 from __future__ import annotations
+from pydoc import describe
 from typing import List
+from enum import Enum
 from pydantic import BaseModel, Field, validator
 
 
@@ -16,8 +18,20 @@ class Rotation(BaseModel):
     while_preferred_team_live: bool = False
 
 
+class Teams(str, Enum):
+    BC="BC"
+    CGY="CGY"
+    EDM="EDM"
+    HAM="HAM"
+    MTL="MTL"
+    OTT="OTT"
+    SSK="SSK"
+    TOR="TOR"
+    WPG="WPG"
+    
+
 class ConfigModel(BaseModel):
-    preferred_teams: List[str]
+    preferred_teams: List[Teams(description='Valid teams list enumerator.')]
     rotation: Rotation
     data_refresh_rate: float = Field(default=15.0, ge=5)
     debug: bool = False
@@ -25,21 +39,3 @@ class ConfigModel(BaseModel):
     
     class Config:
         title = 'Config'
-    
-    @validator('preferred_teams')
-    def check_valid_teams(cls, v):
-        teams_list = [
-            "BC",
-            "CGY",
-            "EDM",
-            "HAM",
-            "MTL",
-            "OTT",
-            "SSK",
-            "TOR",
-            "WPG"
-            ]
-        for team in v:
-            if not team in teams_list:
-                raise ValueError(f'Team {v} is invalid')
-        return v
