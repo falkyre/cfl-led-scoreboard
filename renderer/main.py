@@ -77,11 +77,14 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        #game_details = cfl_api_parser.get_overview(game['id'])
-        #halftime_rotate = game_details['play_by_play'][-1]['play_result_type_id'] == 8 and self.data.config.rotation_preferred_team_live_halftime
-        live_game_preferred = not self.data.showing_preferred_game() and self.data.config.rotation_preferred_team_live_enabled
-        debug.info(f"__should_rotate_to_next_game? - {self.data.config.rotation_enabled and live_game_preferred}")
-        return self.data.config.rotation_enabled and live_game_preferred
+        live_game_preferred = self.data.config.rotation_preferred_team_live_enabled if self.data.showing_preferred_game else False
+        
+        rotate = True if self.data.config.rotation_enabled and not live_game_preferred else False
+        
+        if self.data.config.rotation_preferred_team_live_halftime and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
+            rotate = True
+            
+        return rotate
 
     def __draw_game(self, game):
         debug.info(f'Drawing game. __draw_game({game["id"]})')

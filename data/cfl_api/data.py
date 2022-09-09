@@ -16,8 +16,6 @@ class Data:
         # What game do we want to start on?
         self.current_game_index = 0
         self.current_division_index = 0
-        
-
 
         # Parse today's date and see if we should use today or yesterday
         self.get_current_date()
@@ -26,7 +24,7 @@ class Data:
         self.refresh_games()
         # self.refresh_games(self.current_game()['id'])
         
-        self.showing_preferred_game()
+        self.showing_preferred_game = self.showing_preferred_game()
 
         # TODO: self.playoffs = cflparser.is_playoffs()
         self.today = self.get_today()
@@ -54,14 +52,14 @@ class Data:
                 try:
                     all_games = [game for game in cflparser.get_all_games()]
 
-                    if self.config.rotation_only_preferred:
+                    if self.config.rotation_only_preferred and not self.config.rotation_preferred_team_live_enabled:
                         self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
                         debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
 
-                    elif not self.config.rotation_only_preferred and not self.config.rotation_preferred_team_live_enabled:
+                    elif self.config.rotation_preferred_team_live_enabled and self.showing_preferred_game:
                         self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
                         debug.info(f'Filtering games for preferred teams - {self.config.preferred_teams}')
-                        
+
                     else:
                         self.games = all_games
                         

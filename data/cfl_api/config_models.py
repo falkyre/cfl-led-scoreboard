@@ -15,6 +15,7 @@ class Rotation(BaseModel):
     only_preferred: bool = False
     rates: Rates
     while_preferred_team_live: bool = False
+    while_preferred_team_halftime: bool = False
 
 
 class Teams(str, Enum):

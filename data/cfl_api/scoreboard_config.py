@@ -20,6 +20,7 @@ class ScoreboardConfig:
             self.rotation_only_preferred = config.rotation.only_preferred
             self.rotation_rates = config.rotation.rates.dict()
             self.rotation_preferred_team_live_enabled = config.rotation.while_preferred_team_live
+            self.rotation_preferred_team_live_halftime = config.rotation.while_preferred_team_halftime
 
             # Refresh Rate
             self.data_refresh_rate = config.data_refresh_rate
