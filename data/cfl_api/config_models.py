@@ -1,8 +1,7 @@
 from __future__ import annotations
-from pydoc import describe
 from typing import List
 from enum import Enum
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 
 
 class Rates(BaseModel):
@@ -31,7 +30,7 @@ class Teams(str, Enum):
     
 
 class ConfigModel(BaseModel):
-    preferred_teams: List[Teams(description='Valid teams list enumerator.')]
+    preferred_teams: List[Teams]
     rotation: Rotation
     data_refresh_rate: float = Field(default=15.0, ge=5)
     debug: bool = False

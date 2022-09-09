@@ -12,7 +12,6 @@ class ScoreboardConfig:
             json = self.__get_config(filename_base)
             config = config_models.ConfigModel.parse_obj(json)
             
-            print("\n", config.schema_json(indent=2), "\n")
             
             # Preferred Teams
             self.preferred_teams = config.preferred_teams
@@ -35,6 +34,8 @@ class ScoreboardConfig:
             self.rotation_rates_pregame = self.rotation_rates.pregame
             self.rotation_rates_live = self.rotation_rates.live
             self.rotation_rates_final = self.rotation_rates.final
+            
+            debug.info("Loaded: config.json (parsed by pyndatic).")
 
         def read_json(self, filename):
             # Find and return a json file
