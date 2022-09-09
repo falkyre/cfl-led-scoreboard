@@ -8,7 +8,7 @@ __Note:__ A personal [CFL API key](https://api.cfl.ca/key-request) is required.
 
 This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), and [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard) projects. Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
 
-## Features (v0.1.0)
+## Features (v0.2.0)
 
 ### GAME ROTATION
 
