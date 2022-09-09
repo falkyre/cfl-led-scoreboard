@@ -10,7 +10,7 @@
 		},
 		"while_preferred_team_live": false
 	},
-	"data_refresh_rate": 15.0,
+	"data_refresh_rate": 2.0,
     "debug": true,
     "testing": false
 }
