@@ -1,0 +1,85 @@
+{
+    "title": "Config",
+    "type": "object",
+    "properties": {
+        "preferred_teams": {
+            "title": "Preferred Teams",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "rotation": {
+            "$ref": "#/definitions/Rotation"
+        },
+        "data_refresh_rate": {
+            "title": "Data Refresh Rate",
+            "default": 15.0,
+            "type": "number"
+        },
+        "debug": {
+            "title": "Debug",
+            "default": false,
+            "type": "boolean"
+        },
+        "testing": {
+            "title": "Testing",
+            "default": false,
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "preferred_teams",
+        "rotation"
+    ],
+    "definitions": {
+        "Rates": {
+            "title": "Rates",
+            "type": "object",
+            "properties": {
+                "pregame": {
+                    "title": "Pregame",
+                    "default": 15.0,
+                    "type": "number"
+                },
+                "live": {
+                    "title": "Live",
+                    "default": 15.0,
+                    "type": "number"
+                },
+                "final": {
+                    "title": "Final",
+                    "default": 15.0,
+                    "type": "number"
+                }
+            }
+        },
+        "Rotation": {
+            "title": "Rotation",
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "title": "Enabled",
+                    "default": true,
+                    "type": "boolean"
+                },
+                "only_preferred": {
+                    "title": "Only Preferred",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "rates": {
+                    "$ref": "#/definitions/Rates"
+                },
+                "while_preferred_team_live": {
+                    "title": "While Preferred Team Live",
+                    "default": false,
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "rates"
+            ]
+        }
+    }
+}

@@ -1,7 +1,5 @@
 {
-	"preferred": {
-		"teams": ["HAM", "CGY"]
-	},
+	"preferred_teams": ["HAM", "CGY"],
 	"rotation": {
 		"enabled": true,
 		"only_preferred": false,
@@ -10,9 +8,7 @@
 			"live": 10.0,
 			"final": 7.0
 		},
-		"while_preferred_team_live": {
-			"enabled": true
-		}
+		"while_preferred_team_live": false
 	},
 	"data_refresh_rate": 15.0,
     "debug": true,
