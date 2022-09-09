@@ -64,9 +64,8 @@ This installation process might take some time because it will install all the d
 ```
 git clone --recursive https://github.com/sflems/cfl-led-scoreboard
 cd cfl-led-scoreboard/
-sudo chmod +x scripts/install.sh
-python3 -m venv env && source env/bin/activate
-sudo ./scripts/install.sh
+chmod +x scripts/install.sh
+./scripts/install.sh
 ```
 
 _Be sure to replace `your_api_key` with your personal API key_:
