@@ -290,7 +290,9 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
 
 
 def get_current_season(year=CURRENT_YEAR):
-   if not hasattr(Data, 'current_season'):
+   Data.today = CURRENT_DATE.day
+   new_day = CURRENT_DATE.day != datetime.today().day
+   if not hasattr(Data, 'current_season') or new_day:
       try:
          req_url = SEASON_URL.format(base=BASE_URL, year=year, api_key=API_KEY)
          debug.info(f'Fetching season info from: {req_url}')
@@ -314,7 +316,9 @@ def get_current_season(year=CURRENT_YEAR):
 
 # Ref: SEASON_URL = "{base}/v1/seasons"
 def get_current_week():
-   if not hasattr(Data, 'current_week'):
+   Data.today = CURRENT_DATE.day
+   new_day = CURRENT_DATE.day != datetime.today().day
+   if not hasattr(Data, 'current_week') or new_day:
       try:
          req_url = SEASON_URL.format(base=BASE_URL, api_key=API_KEY)
          debug.info(f'Fetching week info from: {req_url}')
@@ -378,6 +382,8 @@ def get_overview(game_id):
             errors.append("{} ERROR - ID:{} - {}".format(error['code'], error['id'], error['detail']))
          raise ValueError(errors)
       
+      play_by_play = game['data'][0]['play_by_play']
+      
       output = {
                'id': game['data'][0]['game_id'],  # ID of the game
                'date': game['data'][0]['date_start'],  # Date and time of the game
@@ -389,11 +395,12 @@ def get_overview(game_id):
                'state': game['data'][0]['event_status']['name'],   # State of the game.
                'over': game['data'][0]['event_status']['is_active'],
                'quarter': game['data'][0]['event_status']['quarter'],
-               'time': f"{game['data'][0]['event_status']['minutes']:02}:{game['data'][0]['event_status']['seconds']:02}",
+               'minutes': f"{game['data'][0]['event_status']['minutes']}",
+               'seconds': f"{game['data'][0]['event_status']['minutes']}",
                
-               'play_by_play': game['data'][0]['play_by_play'],
+               'play_by_play': play_by_play,
                'possession': game['data'][0]['play_by_play'][-1]['team_abbreviation'],
-               'spot': game['data'][0]['play_by_play'][-1]['field_position_end'],   # Current yards to go.
+               'spot': game['data'][0]['play_by_play'][-1]['field_position_end'],   # Current spot.
                'redzone': game['data'][0]['play_by_play'][-1]['is_in_red_zone'],
                'down': game['data'][0]['play_by_play'][-1]['down'],   # Current down.
                'ytg': game['data'][0]['play_by_play'][-1]['yards_to_go'],   # Current yards to go.

@@ -29,12 +29,14 @@ class Data:
         self.showing_preferred_game()
 
         # TODO: self.playoffs = cflparser.is_playoffs()
-        
+        self.today = self.get_today()
         self.current_week = None
         self.current_season = None
         self.get_season_info()
         
-    
+    def get_today(self):
+        return datetime.today().day
+        
     def get_season_info(self):
         # Get current season & week
         [self.current_season, self.current_week] = cflparser.get_current_season()

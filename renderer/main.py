@@ -85,24 +85,29 @@ class MainRenderer:
 
     def __draw_game(self, game):
         debug.info(f'Drawing game. __draw_game({game["id"]})')
+        
+        time = self.data.get_current_date()
+        gamedatetime = self.data.get_gametime()
 
         if game['state'] == 'Final':
             debug.info('State: Post-Game')
             self._draw_post_game(game)
+        elif game['state'] == 'Final':
+            debug.info('State: Post-Game')
+            self._draw_post_game(game)
+        elif time < gamedatetime - timedelta(hours=1) and game['state'] == 'Pre-Game':
+            debug.info('State: Pre-Game')
+            self._draw_pregame(game)
+        elif time < gamedatetime and game['state'] == 'Pre-Game':
+            debug.info('Countdown til gametime')
+            self._draw_countdown(game)
+        elif game['state'] == 'Postponed' or game['state'] == 'Cancelled':
+            self.data.advance_to_next_game()
+            self.__render_game()
         else:
             game = self.data.current_game()
-            time = self.data.get_current_date()
-            gamedatetime = self.data.get_gametime()
-            
-            if time < gamedatetime - timedelta(hours=1) and game['state'] == 'Pre-Game':
-                debug.info('State: Pre-Game')
-                self._draw_pregame(game)
-            elif time < gamedatetime and game['state'] == 'Pre-Game':
-                debug.info('Countdown til gametime')
-                self._draw_countdown(game)
-            else:
-                debug.info(f'State: Live Game, checking every {self.__rotate_rate_for_game(game)}s')
-                self._draw_live_game(game)
+            debug.info(f'State: Live Game, checking every {self.__rotate_rate_for_game(game)}s')
+            self._draw_live_game(game)
 
     def _draw_pregame(self, game):
             time = self.data.get_current_date()
@@ -186,7 +191,10 @@ class MainRenderer:
         # Prepare the data
         # score = '{}-{}'.format(overview['away_score'], overview['home_score'])
         quarter = f"Q{game['quarter']}"
-        time_period = game['time']
+        
+        minutes = f"{game['minutes']}:02" if game['minutes'] else None
+        seconds = f"{game['seconds']}:02" if game['seconds'] else None
+        time_period = f"{minutes}:{seconds}" if minutes and seconds else ""
         pos_colour = (255, 255, 255)
         if game['redzone']:
             pos_colour = (255, 25, 25)
