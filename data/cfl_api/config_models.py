@@ -38,3 +38,4 @@ class ConfigModel(BaseModel):
     
     class Config:
         title = 'Config'
+        use_enum_values = True
