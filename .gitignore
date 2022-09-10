@@ -57,6 +57,7 @@ supervisor-daemon.conf
 autorun2.sh
 *.out
 *.log
+log.txt
 local_settings.py
 
 # Flask stuff:
