@@ -6,9 +6,13 @@ __Note:__ A personal [CFL API key](https://api.cfl.ca/key-request) is required.
 
 ### Credit and inpsiration
 
-This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), and [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard) projects. Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
+This project was inspired by the following projects:
 
-## Features (v0.2.0)
+* [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard)
+* [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard)
+* [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard) projects.
+
+## Features (v0.2.x)
 
 ### GAME ROTATION
 
@@ -20,7 +24,7 @@ Currently shows the team logos and the game time.
 
 ### Live scoring updates
 
-The score updates every X (rotation_rate) seconds. The scoreboard will display, from top to bottom: quarter, time remaining in quarter, team with possession, down and yards to gain, and the position of the line of scrimmage. ![scoreboard](imgs/live_game.jpg) When a team is in the redzone, their name will light up red.
+The score updates every X (`data_refresh_rate`) seconds. The scoreboard will display, from top to bottom: quarter, time remaining in quarter, team with possession, down and yards to gain, and the position of the line of scrimmage. ![scoreboard](imgs/live_game.jpg) When a team is in the redzone, their name will light up red.
 
 ### Postgame
 
@@ -37,7 +41,8 @@ TODO.
 ## Roadmap
 
 * Finalize CFL API and ensure rate limits.
-* Improve Down and YTG Display, + Possession.
+* Live game / half-time rotations.
+* Playoff spec.
 * Test TD, FG, and other play display/rendering.
 
 ## Installation
@@ -54,7 +59,7 @@ You need Git for cloning this repo and PIP for installing the scoreboard softwar
 
 ```
 sudo apt update
-sudo apt install git python3-pip python3-venv
+sudo apt install git python3-pip
 ```
 
 #### Installing the software
@@ -69,6 +74,7 @@ chmod +x scripts/install.sh
 ```
 
 _Be sure to replace `your_api_key` with your personal API key_:
+
 ```
 echo 'CFL_API_KEY = your_api_key' > .env
 ```
@@ -111,13 +117,13 @@ cd ~/cfl-led-scoreboard/
 sudo python3 main.py 
 ```
 
-**If you run your screen on an Adafruit HAT or Bonnet, you need to supply this flag.**
+__If you run your screen on an Adafruit HAT or Bonnet, you need to supply this flag.__
 
 ```
 sudo python3 main.py --led-gpio-mapping=adafruit-hat
 ```
 
-**If you run your screen with the flicker mod installed.**
+__If you run your screen with the flicker mod installed.__
 
 ```
 sudo python3 main.py --led-gpio-mapping=adafruit-hat-pwm

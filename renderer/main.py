@@ -102,8 +102,7 @@ class MainRenderer:
             self._draw_countdown(game)
         elif game['state'] == 'Pre-Game':
             debug.info('State: Pre-Game')
-            self._draw_countdown(game)
-            #self._draw_pregame(game)
+            self._draw_pregame(game)
         elif game['state'] == 'Postponed' or game['state'] == 'Cancelled':
             self.data.advance_to_next_game()
             self.__render_game()
