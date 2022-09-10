@@ -75,13 +75,16 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        live_game_preferred = self.data.config.rotation_preferred_team_live_enabled and self.data.showing_preferred_game
+        rotate = self.data.config.rotation_enabled
+        live_game = self.data.showing_preferred_game()
+        live_rotate =  live_game and self.data.config.rotation_preferred_team_live_enabled
+        halftime_rotate = live_game and self.data.config.rotation_preferred_team_live_halftime
         
-        rotate = True if self.data.config.rotation_enabled and not live_game_preferred else False
-        
-        if self.data.config.rotation_preferred_team_live_halftime and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
+        if halftime_rotate and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
             rotate = True
-            
+        elif live_rotate:
+            rotate = True
+
         debug.info(f'__should_rotate_to_next_game? {rotate}')    
         return rotate
 

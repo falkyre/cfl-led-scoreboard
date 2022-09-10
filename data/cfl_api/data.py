@@ -22,9 +22,8 @@ class Data:
 
         # Fetch the teams info
         self.refresh_games()
-        # self.refresh_games(self.current_game()['id'])
         
-        self.showing_preferred_game = self.showing_preferred_game()
+        self.showing_preferred_game()
 
         # TODO: self.playoffs = cflparser.is_playoffs()
         self.today = self.get_today()
@@ -120,20 +119,12 @@ class Data:
         next_game = self.games[self.__next_game_index()]
         preferred_next_game = self.config.preferred_teams[0] in [next_game['home_team_abbrev'], next_game['away_team_abbrev']] and next_game['state'] == 'In-Progress'
         showing_preferred_team = False
-        
-        if len(self.config.preferred_teams) > 1:
-            for team in self.config.preferred_teams:
-                if team in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress' and not preferred_next_game:
-                    showing_preferred_team = True
-        else:
-            if self.config.preferred_teams[0] in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
-                    showing_preferred_team = True
+
+        if self.config.preferred_teams[0] in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
+            showing_preferred_team = True
             
-        if current_game is not None and showing_preferred_team:
-            debug.info("showing_preferred_game = true(Live!)")
-            return True
-        debug.info("showing_preferred_game = false (Not live.)")
-        return False
+        debug.info(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
+        return showing_preferred_team
 
     def advance_to_next_game(self):
         debug.info("Advancing to next game.")
