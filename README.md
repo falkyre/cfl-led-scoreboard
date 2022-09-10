@@ -40,10 +40,9 @@ TODO.
 
 ## Roadmap
 
-* Finalize CFL API and ensure rate limits.
-* Live game / half-time rotations.
-* Playoff spec.
 * Test TD, FG, and other play display/rendering.
+* Pydantic config model field descriptions for schema.
+* Playoff spec.
 
 ## Installation
 
@@ -108,7 +107,7 @@ sudo python3 main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --l
 
 Open the `config.json` file from the root folder and change these values:
 
-* ```teams``` Set this as your favourite team, but it doesn't do anything yet (for next season)
+* ```teams``` Set this as your favourite team, or teams.
 
 Now, in a terminal run this command.
 

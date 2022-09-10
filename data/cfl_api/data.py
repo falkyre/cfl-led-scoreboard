@@ -22,8 +22,6 @@ class Data:
 
         # Fetch the teams info
         self.refresh_games()
-        
-        self.showing_preferred_game()
 
         # TODO: self.playoffs = cflparser.is_playoffs()
         self.today = self.get_today()
@@ -43,7 +41,6 @@ class Data:
         return datetime.now(get_localzone())
 
     # Get All Games
-# CHANGE gameid TO NONE
     def refresh_games(self, game_id=None):
         attempts_remaining = 5
         while attempts_remaining > 0:

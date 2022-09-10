@@ -8,8 +8,8 @@
 			"live": 2.0,
 			"final": 2.0
 		},
-		"while_preferred_team_live": true,
-		"while_preferred_team_halftime": false
+		"while_preferred_team_live": false,
+		"while_preferred_team_halftime": true
 	},
 	"data_refresh_rate": 15.0,
     "debug": false,
