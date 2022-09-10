@@ -178,6 +178,7 @@ class MainRenderer:
     def _draw_live_game(self, game):
         homescore = '{0:02d}'.format(game['home_score'])
         awayscore = '{0:02d}'.format(game['away_score'])
+        last_play_code = game['play_by_play'][-1]['play_result_type_id']
 
         # Refresh the data
         if self.data.needs_refresh:
@@ -185,10 +186,10 @@ class MainRenderer:
             self.data.refresh_games()
             self.data.needs_refresh = False
         # Use this code if you want the animations to run
-        if game['home_score'] > int(homescore) + 5 or game['away_score'] > int(awayscore) + 5:
+        if last_play_code == 1:
             debug.info('should draw TD')
             self._draw_td()
-        elif game['home_score'] > int(homescore) + 2 or game['away_score'] > int(awayscore) + 2:
+        elif last_play_code == 2:
             debug.info('should draw FG')
             self._draw_fg()
         # Prepare the data
