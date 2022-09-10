@@ -395,8 +395,8 @@ def get_overview(game_id):
                'state': game['data'][0]['event_status']['name'],   # State of the game.
                'over': game['data'][0]['event_status']['is_active'],
                'quarter': game['data'][0]['event_status']['quarter'],
-               'minutes': f"{game['data'][0]['event_status']['minutes']}",
-               'seconds': f"{game['data'][0]['event_status']['minutes']}",
+               'minutes': f"{game['data'][0]['event_status']['minutes']:02}",
+               'seconds': f"{game['data'][0]['event_status']['seconds']:02}",
                
                'play_by_play': play_by_play,
                'possession': play_by_play[-1]['team_abbreviation'],
