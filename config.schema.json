@@ -94,6 +94,11 @@
           "title": "While Preferred Team Live",
           "default": false,
           "type": "boolean"
+        },
+        "while_preferred_team_halftime": {
+          "title": "While Preferred Team Halftime",
+          "default": false,
+          "type": "boolean"
         }
       },
       "required": [

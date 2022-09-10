@@ -1,9 +1,7 @@
 import time as t
-from datetime import datetime, timedelta
-from dateutil import parser
+from datetime import  timedelta
+from tzlocal import get_localzone
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
-from rgbmatrix import graphics
-from data.cfl_api import cfl_api_parser
 from utils import center_text
 from renderer.screen_config import screenConfig
 import debug
@@ -77,20 +75,21 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        live_game_preferred = self.data.config.rotation_preferred_team_live_enabled if self.data.showing_preferred_game else False
+        live_game_preferred = self.data.config.rotation_preferred_team_live_enabled and self.data.showing_preferred_game
         
         rotate = True if self.data.config.rotation_enabled and not live_game_preferred else False
         
         if self.data.config.rotation_preferred_team_live_halftime and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
             rotate = True
             
+        debug.info(f'__should_rotate_to_next_game? {rotate}')    
         return rotate
 
     def __draw_game(self, game):
         debug.info(f'Drawing game. __draw_game({game["id"]})')
         
-        time = self.data.get_current_date()
-        gamedatetime = self.data.get_gametime()
+        gametime = self.data.get_gametime()
+        one_hour_pregame = gametime - timedelta(hours=1)
 
         if game['state'] == 'Final':
             debug.info('State: Post-Game')
@@ -98,12 +97,13 @@ class MainRenderer:
         elif game['state'] == 'Final':
             debug.info('State: Post-Game')
             self._draw_post_game(game)
-        elif time < gamedatetime - timedelta(hours=1) and game['state'] == 'Pre-Game':
-            debug.info('State: Pre-Game')
-            self._draw_pregame(game)
-        elif time < gamedatetime and game['state'] == 'Pre-Game':
+        elif gametime.now(get_localzone()) > one_hour_pregame and game['state'] == 'Pre-Game':
             debug.info('Countdown til gametime')
             self._draw_countdown(game)
+        elif game['state'] == 'Pre-Game':
+            debug.info('State: Pre-Game')
+            self._draw_countdown(game)
+            #self._draw_pregame(game)
         elif game['state'] == 'Postponed' or game['state'] == 'Cancelled':
             self.data.advance_to_next_game()
             self.__render_game()
@@ -143,14 +143,12 @@ class MainRenderer:
 
     def _draw_countdown(self, game):
         time = self.data.get_current_date()
-        gametime = self.data.get_gametime()
-        if time < gametime:
-            gt = gametime - time
-            # as beautiful as I am
-            if gt > timedelta(hours=1):
-                gametime = ':'.join(str(gametime - time).split(':')[:2])
-            else:
-                gametime = ':'.join(str(gametime - time).split(':')[1:]).split('.')[:1][0]
+        game_time = self.data.get_gametime()
+        if time < game_time:
+            gt_diff = game_time - time
+            min_to_go = round(gt_diff.total_seconds() / 60)
+            gametime = f'{min_to_go} min'
+            
             # Center the game time on screen.
             gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
             # Draw the text on the Data image.

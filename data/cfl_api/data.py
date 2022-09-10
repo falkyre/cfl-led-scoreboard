@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import time as t
 from tzlocal import get_localzone
 from . import cfl_api_parser as cflparser
@@ -108,9 +108,9 @@ class Data:
             self.advance_to_next_game()
     
     def get_gametime(self):
-        tz_diff = t.timezone if (t.localtime().tm_isdst == 0) else t.altzone
+        raw_gt = self.games[self.current_game_index]['date']
 #        gametime = datetime.strptime(self.games[self.current_game_index]['date'], "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=(tz_diff / 60 / 60 * -1))
-        gametime = datetime.strptime(self.games[0]['date'], "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=(tz_diff / 60 / 60 * -1))
+        gametime = datetime.strptime(raw_gt, "%Y-%m-%dT%H:%M:%S%z").astimezone(get_localzone())
         return gametime
 
     def current_game(self):
@@ -140,6 +140,7 @@ class Data:
         return False
 
     def advance_to_next_game(self):
+        debug.info("Advancing to next game.")
         self.current_game_index = self.__next_game_index()
 
     def __filter_list_of_games(self, games, teams):

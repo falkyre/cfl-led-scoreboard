@@ -4,14 +4,14 @@
 		"enabled": true,
 		"only_preferred": false,
 		"rates": {
-			"pregame": 10.0,
-			"live": 10.0,
-			"final": 7.0
+			"pregame": 2.0,
+			"live": 2.0,
+			"final": 2.0
 		},
-		"while_preferred_team_live": true,
+		"while_preferred_team_live": false,
 		"while_preferred_team_halftime": false
 	},
 	"data_refresh_rate": 15.0,
-    "debug": true,
+    "debug": false,
     "testing": false
 }
