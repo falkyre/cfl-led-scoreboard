@@ -196,8 +196,8 @@ class MainRenderer:
         # score = '{}-{}'.format(overview['away_score'], overview['home_score'])
         quarter = f"Q{game['quarter']}"
         
-        minutes = f"{game['minutes']}:02" if game['minutes'] else None
-        seconds = f"{game['seconds']}:02" if game['seconds'] else None
+        minutes = f"{game['minutes']:02}" if game['minutes'] else None
+        seconds = f"{game['seconds']:02}" if game['seconds'] else None
         time_period = f"{minutes}:{seconds}" if minutes and seconds else ""
         pos_colour = (255, 255, 255)
         if game['redzone']:

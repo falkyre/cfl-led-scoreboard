@@ -4,9 +4,9 @@
 		"enabled": true,
 		"only_preferred": false,
 		"rates": {
-			"pregame": 2.0,
-			"live": 2.0,
-			"final": 2.0
+			"pregame": 5.0,
+			"live": 5.0,
+			"final": 5.0
 		},
 		"while_preferred_team_live": false,
 		"while_preferred_team_halftime": true
