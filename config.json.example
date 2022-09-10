@@ -6,9 +6,10 @@
 		"rates": {
 			"pregame": 10.0,
 			"live": 10.0,
-			"final": 7.0
+			"final": 10.0
 		},
-		"while_preferred_team_live": false
+		"while_preferred_team_live": false,
+		"while_preferred_team_halftime": false
 	},
 	"data_refresh_rate": 15.0,
     "debug": false,

@@ -18,9 +18,9 @@ This project was inspired by the following projects:
 
 Hey, neat-o! You can rotate through multiple games now if you want to! Will still need some finessing, but definitely an improvement.
 
-### Pregame
+### Pregame Countdown
 
-Currently shows the team logos and the game time.
+Currently shows the team logos and the game time or countdown.
 
 ### Live scoring updates
 
