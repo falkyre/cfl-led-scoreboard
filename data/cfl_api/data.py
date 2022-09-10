@@ -52,13 +52,9 @@ class Data:
                 try:
                     all_games = [game for game in cflparser.get_all_games()]
 
-                    if self.config.rotation_only_preferred and not self.config.rotation_preferred_team_live_enabled:
+                    if self.config.rotation_only_preferred:
                         self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
                         debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
-
-                    elif self.config.rotation_preferred_team_live_enabled and self.showing_preferred_game:
-                        self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
-                        debug.info(f'Filtering games for preferred teams - {self.config.preferred_teams}')
 
                     else:
                         self.games = all_games

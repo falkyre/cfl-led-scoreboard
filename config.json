@@ -2,7 +2,7 @@
 	"preferred_teams": ["HAM", "CGY"],
 	"rotation": {
 		"enabled": true,
-		"only_preferred": false,
+		"only_preferred": true,
 		"rates": {
 			"pregame": 2.0,
 			"live": 2.0,
