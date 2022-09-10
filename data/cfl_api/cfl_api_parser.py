@@ -17,7 +17,7 @@ ARGS = args()
 SB_CONFIG = sb_config.ScoreboardConfig("config", ARGS)
 TESTING = SB_CONFIG.testing
 
-REQUEST_TIMEOUT = 5
+REQUEST_TIMEOUT = 10
 NETWORK_RETRY_SLEEP_TIME = 10.0
 
 # get current datetime
@@ -399,11 +399,11 @@ def get_overview(game_id):
                'seconds': f"{game['data'][0]['event_status']['minutes']}",
                
                'play_by_play': play_by_play,
-               'possession': game['data'][0]['play_by_play'][-1]['team_abbreviation'],
-               'spot': game['data'][0]['play_by_play'][-1]['field_position_end'],   # Current spot.
-               'redzone': game['data'][0]['play_by_play'][-1]['is_in_red_zone'],
-               'down': game['data'][0]['play_by_play'][-1]['down'],   # Current down.
-               'ytg': game['data'][0]['play_by_play'][-1]['yards_to_go'],   # Current yards to go.
+               'possession': play_by_play[-1]['team_abbreviation'],
+               'spot': play_by_play[-1]['field_position_end'],   # Current spot.
+               'redzone': play_by_play[-1]['is_in_red_zone'],
+               'down': play_by_play[-1]['down'],   # Current down.
+               'ytg': play_by_play[-1]['yards_to_go'],   # Current yards to go.
                
                'home_team_abbrev': game['data'][0]['team_2']['abbreviation'],  # Home team name abbreviation
                'home_team_name': game['data'][0]['team_2']['nickname'],  # Home team name
