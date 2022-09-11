@@ -405,6 +405,7 @@ def get_overview(game_id):
                'redzone': play_by_play[-1]['is_in_red_zone'] if pbp_has_plays else "",
                'down': play_by_play[-1]['down'] if pbp_has_plays else "",   # Current down.
                'ytg': play_by_play[-1]['yards_to_go'] if pbp_has_plays else "",   # Current yards to go.
+               'play_result_type_id': play_by_play[-1]['play_result_type_id'] if pbp_has_plays else "",   # Last play ID
                
                'home_team_abbrev': game['data'][0]['team_2']['abbreviation'],  # Home team name abbreviation
                'home_team_name': game['data'][0]['team_2']['nickname'],  # Home team name

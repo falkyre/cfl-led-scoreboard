@@ -146,45 +146,40 @@ class MainRenderer:
     def _draw_countdown(self, game):
         time = self.data.get_current_date()
         game_time = self.data.get_gametime()
-        if time < game_time:
+        if not time < game_time:
+            gametime = f'Kickoff!'
+        else:
             gt_diff = game_time - time
             min_to_go = round(gt_diff.total_seconds() / 60)
             gametime = f'{min_to_go} min'
             
-            # Center the game time on screen.
-            gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
-            # Draw the text on the Data image.
-            self.draw.text((29, 0), 'IN', font=self.font_mini)
-            self.draw.multiline_text((gametime_pos, 6), gametime, fill=(255, 255, 255), font=self.font_mini, align="center")
-            self.draw.text((25, 15), 'VS', font=self.font)
-            # Put the data on the canvas
-            self.canvas.SetImage(self.image, 0, 0)
-            # TEMP Open the logo image file
-            away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-            home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-            # Put the images on the canvas
-            self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
-            self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
+        # Center the game time on screen.
+        gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
+        # Draw the text on the Data image.
+        self.draw.text((29, 0), 'IN', font=self.font_mini)
+        self.draw.multiline_text((gametime_pos, 6), gametime, fill=(255, 255, 255), font=self.font_mini, align="center")
+        self.draw.text((25, 15), 'VS', font=self.font)
+        # Put the data on the canvas
+        self.canvas.SetImage(self.image, 0, 0)
+        # TEMP Open the logo image file
+        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        # Put the images on the canvas
+        self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
+        self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
 
-            # Load the canvas on screen.
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
-            # Refresh the Data image.
-            self.image = Image.new('RGB', (self.width, self.height))
-            self.draw = ImageDraw.Draw(self.image)
-            # t.sleep(1)
-        else:
-            self.__draw_game(game)
+        # Load the canvas on screen.
+        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        # Refresh the Data image.
+        self.image = Image.new('RGB', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
+        # t.sleep(1)
 
     def _draw_live_game(self, game):
         homescore = '{0:02d}'.format(game['home_score'])
         awayscore = '{0:02d}'.format(game['away_score'])
-        last_play_code = game['play_by_play'][-1]['play_result_type_id']
+        last_play_code = game['play_result_type_id']
 
-        # Refresh the data
-        if self.data.needs_refresh:
-            debug.info('Refresh game overview')
-            self.data.refresh_games()
-            self.data.needs_refresh = False
         # Use this code if you want the animations to run
         if last_play_code == 1:
             debug.info('should draw TD')
