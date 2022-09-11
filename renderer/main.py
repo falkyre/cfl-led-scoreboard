@@ -33,6 +33,8 @@ class MainRenderer:
             # If we need to refresh the overview data, do that
             if self.data.needs_refresh:
                 self.data.refresh_games()
+                
+            debug.info(f"Games: {self.data.games}")
 
             basic_game = self.data.games[self.data.current_game_index]
 

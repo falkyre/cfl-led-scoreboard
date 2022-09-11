@@ -1,17 +1,17 @@
 {
-	"preferred_teams": ["CGY"],
+	"preferred_teams": ["HAM"],
 	"rotation": {
 		"enabled": true,
 		"only_preferred": true,
 		"rates": {
-			"pregame": 5.0,
-			"live": 5.0,
-			"final": 5.0
+			"pregame": 7.0,
+			"live": 10.0,
+			"final": 7.0
 		},
 		"while_preferred_team_live": true,
 		"while_preferred_team_halftime": true
 	},
 	"data_refresh_rate": 15.0,
-    "debug": false,
+    "debug": true,
     "testing": false
 }

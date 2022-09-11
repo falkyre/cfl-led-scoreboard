@@ -48,7 +48,7 @@ class Data:
                 try:
                     all_games = [game for game in cflparser.get_all_games()]
 
-                    if self.config.rotation_only_preferred:
+                    if self.config.rotation_only_preferred and self.config.preferred_teams:
                         self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
                         debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
 
@@ -115,10 +115,9 @@ class Data:
     def showing_preferred_game(self):
         current_game = self.games[self.current_game_index]
         next_game = self.games[self.__next_game_index()]
-        preferred_next_game = self.config.preferred_teams[0] in [next_game['home_team_abbrev'], next_game['away_team_abbrev']] and next_game['state'] == 'In-Progress'
         showing_preferred_team = False
 
-        if self.config.preferred_teams[0] in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
+        if self.config.preferred_teams and self.config.preferred_teams[0] in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
             showing_preferred_team = True
             
         debug.info(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
@@ -130,6 +129,8 @@ class Data:
 
     def __filter_list_of_games(self, games, teams):
         filtered_games = [game for game in games if set([game['away_team_abbrev'], game['home_team_abbrev']]).intersection(set(teams))]
+        if not filtered_games:
+            return games
         return filtered_games
 
     def __next_game_index(self):
