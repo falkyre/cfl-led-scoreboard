@@ -33,7 +33,7 @@ class TeamEnum(str, Enum):
 class ConfigModel(BaseModel):
     preferred_teams: List[TeamEnum] = Field(["HAM"],  title="Preferred Teams", description="List of preferred teams to display. First is priority.", unique_items=True)
     rotation: Rotation
-    data_refresh_rate: float = Field(15.0, ge=5, description="Sets refresh rate for games data. (Min=5.0)")
+    data_refresh_rate: float = Field(10.0, ge=5, description="Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)")
     debug: bool = Field(False, description="Enable debugging.")
     testing: bool = Field(False, description="Enabled test data.")
     

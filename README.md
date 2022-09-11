@@ -147,3 +147,10 @@ Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/r
 ## Licensing
 
 This project uses the GNU General Public License v3.0. If you intend to sell these, the code must remain open source and you at least have to tell people how cool I am (please, I need this).
+
+***
+
+## Disclaimers
+
+* Rate limits for the CFL API are [30 requests per minute](https://api.cfl.ca/key-request#cb_limit_secret_key). While best efforts are made to ensure these limits are respected, various errors may cause these limits to by bypassed. As such we are not responsible for the loss of your CFL API key for any reason.
+* Data accuracy is reliant on the CFL API being updated with up-to-date game data.

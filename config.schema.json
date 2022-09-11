@@ -19,8 +19,8 @@
     },
     "data_refresh_rate": {
       "title": "Data Refresh Rate",
-      "description": "Sets refresh rate for games data. (Min=5.0)",
-      "default": 15.0,
+      "description": "Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)",
+      "default": 10.0,
       "minimum": 5,
       "type": "number"
     },
