@@ -16,6 +16,7 @@ class Data:
 
         # What game do we want to start on?
         self.current_game_index = 0
+        self.current_game_overview = None
         self.current_division_index = 0
 
         # Parse today's date and see if we should use today or yesterday
@@ -47,6 +48,14 @@ class Data:
         while attempts_remaining > 0:
             if game_id is None:
                 try:
+                    if not hasattr(self, "games_refresh_time"):
+                        self.games_refresh_time = 0
+                    time_since_refresh = t.time() - self.games_refresh_time
+                    if not time_since_refresh > cflparser.SB_CONFIG.data_refresh_rate:
+                        delay = cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh
+                        debug.info(f"Rate limiting games refresh. Sleeping for {round(delay)}s")
+                        t.sleep(cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh)
+                        
                     all_games = [game for game in cflparser.get_all_games()]
 
                     if self.config.rotation_only_preferred and self.config.preferred_teams:
@@ -76,11 +85,24 @@ class Data:
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
             else:
                 try:
-                    game = cflparser.get_overview(game_id)
-                    self.game_refresh_time = t.time()
+                    if not self.current_game_overview :
+                        self.current_game_overview = cflparser.get_overview(game_id)
+                            
+                    if not game_id == self.current_game_overview['id']:
+                        if not hasattr(self, "games_refresh_time"):
+                            self.games_refresh_time = 0
+                        time_since_refresh = t.time() - self.games_refresh_time
+                        if not time_since_refresh > cflparser.SB_CONFIG.data_refresh_rate:
+                            delay = cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh
+                            debug.info(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
+                            t.sleep(cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh)
+                        self.current_game_overview = cflparser.get_overview(game_id)
+                    
+                    self.games_refresh_time = t.time()
                     self.needs_refresh = False
                     self.network_issues = False
-                    return game
+                    
+                    return self.current_game_overview
 
                 except ValueError as e:
                     self.network_issues = True
