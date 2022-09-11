@@ -1,4 +1,5 @@
 from datetime import datetime
+from distutils.command.config import config
 import time as t
 from tzlocal import get_localzone
 from . import cfl_api_parser as cflparser
@@ -119,7 +120,11 @@ class Data:
 
         if self.config.preferred_teams and self.config.preferred_teams[0] in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
             showing_preferred_team = True
-            
+        elif len(self.config.preferred_teams) > 1:
+            for team in self.config.preferred_teams:
+                if team in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
+                    showing_preferred_team = True
+
         debug.info(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
         return showing_preferred_team
 
@@ -129,8 +134,20 @@ class Data:
 
     def __filter_list_of_games(self, games, teams):
         filtered_games = [game for game in games if set([game['away_team_abbrev'], game['home_team_abbrev']]).intersection(set(teams))]
+        
+        # Return all games if no preferred games are found.
         if not filtered_games:
             return games
+        
+        # Return all games if current preferred game live?
+        if self.config.rotation_preferred_team_live_enabled and self.showing_preferred_game():
+            return games
+        
+        # Return all games if current preferred game halftime
+        halftime = self.data.games[self.current_game_index].quarter == 2 and self.data.games[self.current_game_index].minutes == 0 and self.data.games[self.current_game_index].seconds == 0
+        if self.config.rotation_preferred_team_live_halftime and self.showing_preferred_game() and halftime:
+            return games
+             
         return filtered_games
 
     def __next_game_index(self):
