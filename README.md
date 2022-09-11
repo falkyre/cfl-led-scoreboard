@@ -10,7 +10,7 @@ This project was inspired by the following projects:
 
 * [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard)
 * [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard)
-* [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard) projects.
+* [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard)
 
 ## Features (v0.2.x)
 
