@@ -30,19 +30,15 @@ The score updates every X (`data_refresh_rate`) seconds. The scoreboard will dis
 
 Just kind of looks like the pre-game screen but with the final scores. ![final score](imgs/postgame.jpg)
 
-### Off season
-
-It displays a message that it's the off season. You should just turn it off and plan to be heartbroken again next year.
-
-### Preseason
-
-TODO.
-
 ## Roadmap
 
 * Test TD, FG, and other play display/rendering.
+* Game get_overview() rate limits.
+* Preferred team & teams rotation while live/halftime broken. Refactor.
 * Pydantic config model field descriptions for schema.
+* Preseason spec.
 * Playoff spec.
+* Handle off-season.
 
 ## Installation
 
