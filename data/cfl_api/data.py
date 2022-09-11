@@ -76,11 +76,11 @@ class Data:
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
             else:
                 try:
-                    self.game = cflparser.get_overview(game_id)
+                    game = cflparser.get_overview(game_id)
                     self.game_refresh_time = t.time()
                     self.needs_refresh = False
                     self.network_issues = False
-                    break
+                    return game
 
                 except ValueError as e:
                     self.network_issues = True
@@ -110,8 +110,7 @@ class Data:
     def current_game(self):
         current_game = None
         if len(self.games) > 0:
-            current_game = cflparser.get_overview(game_id=self.games[self.current_game_index]['id'])
-            return current_game
+            return self.refresh_games(game_id=self.games[self.current_game_index]['id'])
 
     def showing_preferred_game(self):
         current_game = self.games[self.current_game_index]

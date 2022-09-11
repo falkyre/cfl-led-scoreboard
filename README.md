@@ -33,8 +33,6 @@ Just kind of looks like the pre-game screen but with the final scores. ![final s
 ## Roadmap
 
 * Test TD, FG, and other play display/rendering.
-* Game get_overview() rate limits.
-* Preferred team & teams rotation while live/halftime broken. Refactor.
 * Preseason spec.
 * Playoff spec.
 * Handle off-season.
