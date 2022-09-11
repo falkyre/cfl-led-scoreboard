@@ -7,7 +7,7 @@
       "description": "List of preferred teams to display. First is priority.",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/TeamEnum"
+        "$ref": "#/definitions/Team"
       },
       "uniqueItems": true
     },
@@ -39,8 +39,8 @@
     "testing"
   ],
   "definitions": {
-    "TeamEnum": {
-      "title": "TeamEnum",
+    "Team": {
+      "title": "Team",
       "description": "An enumeration.",
       "enum": [
         "BC",

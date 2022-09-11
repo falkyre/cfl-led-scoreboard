@@ -18,7 +18,7 @@ class Rotation(BaseModel):
     while_preferred_team_halftime: bool = Field(..., description="Rotate games while preferred teams is at halftime.")
 
 
-class TeamEnum(str, Enum):
+class Team(str, Enum):
     BC="BC"
     CGY="CGY"
     EDM="EDM"
@@ -31,7 +31,7 @@ class TeamEnum(str, Enum):
 
 
 class ConfigModel(BaseModel):
-    preferred_teams: List[TeamEnum] = Field(..., title="Preferred Teams", description="List of preferred teams to display. First is priority.", unique_items=True)
+    preferred_teams: List[Team] = Field(..., title="Preferred Teams", description="List of preferred teams to display. First is priority.", unique_items=True)
     rotation: Rotation
     data_refresh_rate: float = Field(..., ge=5, description="Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)")
     debug: bool = Field(..., description="Enable debugging.")
