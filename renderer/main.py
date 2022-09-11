@@ -96,9 +96,9 @@ class MainRenderer:
 
         if game['state'] == 'Final':
             debug.info('State: Post-Game')
-            #self._draw_post_game(game)
-            game = self.data.current_game()
-            self._draw_live_game(game)
+            self._draw_post_game(game)
+            #game = self.data.current_game()
+            #self._draw_live_game(game)
         elif gametime.now(get_localzone()) > one_hour_pregame and game['state'] == 'Pre-Game':
             debug.info('Countdown til gametime')
             self._draw_countdown(game)
