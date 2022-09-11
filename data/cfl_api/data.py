@@ -100,9 +100,10 @@ class Data:
             self.advance_to_next_game()
     
     def get_gametime(self):
-        raw_gt = self.games[self.current_game_index]['date']
+        raw_gt = datetime.strptime(self.games[self.current_game_index]['date'], "%Y-%m-%dT%H:%M:%S%z")
+        tz = get_localzone()
 #        gametime = datetime.strptime(self.games[self.current_game_index]['date'], "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=(tz_diff / 60 / 60 * -1))
-        gametime = datetime.strptime(raw_gt, "%Y-%m-%dT%H:%M:%S%z").astimezone(get_localzone())
+        gametime = raw_gt.astimezone(tz)
         return gametime
 
     def current_game(self):
