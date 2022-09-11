@@ -5,9 +5,6 @@
     "preferred_teams": {
       "title": "Preferred Teams",
       "description": "List of preferred teams to display. First is priority.",
-      "default": [
-        "HAM"
-      ],
       "type": "array",
       "items": {
         "$ref": "#/definitions/TeamEnum"
@@ -20,25 +17,26 @@
     "data_refresh_rate": {
       "title": "Data Refresh Rate",
       "description": "Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)",
-      "default": 10.0,
       "minimum": 5,
       "type": "number"
     },
     "debug": {
       "title": "Debug",
       "description": "Enable debugging.",
-      "default": false,
       "type": "boolean"
     },
     "testing": {
       "title": "Testing",
       "description": "Enabled test data.",
-      "default": false,
       "type": "boolean"
     }
   },
   "required": [
-    "rotation"
+    "preferred_teams",
+    "rotation",
+    "data_refresh_rate",
+    "debug",
+    "testing"
   ],
   "definitions": {
     "TeamEnum": {
@@ -64,25 +62,27 @@
         "pregame": {
           "title": "Pregame",
           "description": "Sets pre-game rotation rate. (Min=2.0)",
-          "default": 15.0,
           "minimum": 2,
           "type": "number"
         },
         "live": {
           "title": "Live",
           "description": "Sets live-game rotation rate. (Min=2.0)",
-          "default": 15.0,
           "minimum": 2,
           "type": "number"
         },
         "final": {
           "title": "Final",
           "description": "Sets post-game rotation rate. (Min=2.0)",
-          "default": 15.0,
           "minimum": 2,
           "type": "number"
         }
-      }
+      },
+      "required": [
+        "pregame",
+        "live",
+        "final"
+      ]
     },
     "Rotation": {
       "title": "Rotation",
@@ -91,13 +91,11 @@
         "enabled": {
           "title": "Enabled",
           "description": "Enable rotation of games.",
-          "default": true,
           "type": "boolean"
         },
         "only_preferred": {
           "title": "Only Preferred",
           "description": "Rotate only preferred teams.",
-          "default": false,
           "type": "boolean"
         },
         "rates": {
@@ -106,18 +104,20 @@
         "while_preferred_team_live": {
           "title": "While Preferred Team Live",
           "description": "Rotate games while preferred team is live.",
-          "default": false,
           "type": "boolean"
         },
         "while_preferred_team_halftime": {
           "title": "While Preferred Team Halftime",
           "description": "Rotate games while preferred teams is at halftime.",
-          "default": false,
           "type": "boolean"
         }
       },
       "required": [
-        "rates"
+        "enabled",
+        "only_preferred",
+        "rates",
+        "while_preferred_team_live",
+        "while_preferred_team_halftime"
       ]
     }
   }
