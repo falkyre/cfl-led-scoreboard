@@ -128,3 +128,6 @@ config/config.json
 config/*.config.json
 config/config.json.backup
 config/location.json
+config.json
+config.json.example
+config.schema.json

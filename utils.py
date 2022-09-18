@@ -65,6 +65,10 @@ def args():
     parser.add_argument("--fav-team", action="store",
                         help="ID of the team to fallow. (Default:8 (Montreal Canadien)) Change the default in the config.json", type=int)
 
+    parser.add_argument("--logcolor", action="store_true", help="Display log in color (command line only)")
+
+    parser.add_argument("--loglevel", action="store", help="log level to display (INFO,WARN,ERROR,CRITICAL,DEBUG)", type=str)
+
     return parser.parse_args()
 
 

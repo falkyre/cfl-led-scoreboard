@@ -22,7 +22,18 @@ debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, 
 
 # Read scoreboard options from config.json if it exists
 config = ScoreboardConfig("config", args)
-debug.set_debug_status(config)
+
+#If we pass the logging arguments on command line, override what's in the config.json, else use what's in config.json (color will always be false in config.json)
+if args.logcolor and args.loglevel != None:
+      debug.set_debug_status(config,logcolor=args.logcolor,loglevel=args.loglevel)
+elif not args.logcolor and args.loglevel != None:
+      debug.set_debug_status(config,loglevel=args.loglevel)
+elif args.logcolor and args.loglevel == None:
+      debug.set_debug_status(config,logcolor=args.logcolor)
+else:
+      debug.set_debug_status(config)
+
+# debug.set_debug_status(config)
 
 data = Data(config)
 

@@ -57,11 +57,12 @@ class Data:
                         t.sleep(cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh)
                         
                     all_games = [game for game in cflparser.get_all_games()]
+                    self.games = all_games
 
                     if self.config.rotation_only_preferred and self.config.preferred_teams:
-                        self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
                         debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
-
+                        self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
+                        
                     else:
                         self.games = all_games
                         
@@ -165,7 +166,7 @@ class Data:
             return games
         
         # Return all games if current preferred game halftime
-        halftime = self.data.games[self.current_game_index].quarter == 2 and self.data.games[self.current_game_index].minutes == 0 and self.data.games[self.current_game_index].seconds == 0
+        halftime = self.games[self.current_game_index].get("quarter") == 2 and self.games[self.current_game_index].get("minutes") == 0 and self.games[self.current_game_index].get("seconds") == 0
         if self.config.rotation_preferred_team_live_halftime and self.showing_preferred_game() and halftime:
             return games
              
