@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import time as t
 from tzlocal import get_localzone
 from . import cfl_api_parser as cflparser
@@ -21,16 +21,17 @@ class Data:
         # Parse today's date and see if we should use today or yesterday
         self.get_current_date()
 
-        # Fetch the teams info
-        self.games_refresh_time = config.data_refresh_rate
-        self.games = []
-        self.refresh_games()
-
         # TODO: self.playoffs = cflparser.is_playoffs()
         self.today = self.get_today()
+        self.time_since_day_refresh = t.time()
         self.current_week = None
         self.current_season = None
         self.get_season_info()
+        
+    # Fetch the teams info
+        self.games_refresh_time = config.data_refresh_rate
+        self.games = []
+        self.refresh_games()
 
     def get_today(self):
         return datetime.today().day
@@ -49,13 +50,17 @@ class Data:
             if not game_id:
                 try:
                     time_since_refresh = t.time() - self.games_refresh_time
-                    if not time_since_refresh > cflparser.SB_CONFIG.data_refresh_rate:
-                        delay = cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh
+                    if not time_since_refresh > self.config.data_refresh_rate:
+                        delay = self.config.data_refresh_rate - time_since_refresh
                         debug.info(f"Rate limiting games refresh. Sleeping for {round(delay)}s")
-                        t.sleep(cflparser.SB_CONFIG.data_refresh_rate -
-                                time_since_refresh)
+                        time_since_day_start = t.time() - self.time_since_day_refresh
+                        
+                        if time_since_day_start > 86400:
+                            self.current_week = cflparser.get_current_week()
+                            
+                        t.sleep(self.config.data_refresh_rate - time_since_refresh)
 
-                    all_games = [game for game in cflparser.get_all_games()]
+                    all_games = cflparser.get_all_games()
 
                     if self.config.rotation_only_preferred and self.config.preferred_teams:
                         filtered_games = self.__filter_list_of_games(
@@ -95,11 +100,11 @@ class Data:
                         if not hasattr(self, "games_refresh_time"):
                             self.games_refresh_time = 0
                         time_since_refresh = t.time() - self.games_refresh_time
-                        if not time_since_refresh > cflparser.SB_CONFIG.data_refresh_rate:
-                            delay = cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh
+                        if not time_since_refresh > self.config.data_refresh_rate:
+                            delay = self.config.data_refresh_rate - time_since_refresh
                             debug.info(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
                             t.sleep(
-                                cflparser.SB_CONFIG.data_refresh_rate - time_since_refresh)
+                                self.config.data_refresh_rate - time_since_refresh)
                         self.current_game_overview = cflparser.get_overview(
                             game_id)
 

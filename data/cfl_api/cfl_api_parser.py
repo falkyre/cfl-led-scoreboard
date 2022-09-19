@@ -291,8 +291,9 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
 
 def get_current_season(year=CURRENT_YEAR):
    Data.today = CURRENT_DATE.day
-   new_day = CURRENT_DATE.day != datetime.today().day
+   new_day = Data.today != datetime.today().day
    if not hasattr(Data, 'current_season') or new_day:
+      Data.today = datetime.today().day
       try:
          req_url = SEASON_URL.format(base=BASE_URL, year=year, api_key=API_KEY)
          debug.info(f'Fetching season info from: {req_url}')
@@ -317,8 +318,9 @@ def get_current_season(year=CURRENT_YEAR):
 # Ref: SEASON_URL = "{base}/v1/seasons"
 def get_current_week():
    Data.today = CURRENT_DATE.day
-   new_day = CURRENT_DATE.day != datetime.today().day
+   new_day = Data.today != datetime.today().day
    if not hasattr(Data, 'current_week') or new_day:
+      Data.today = datetime.today().day
       try:
          req_url = SEASON_URL.format(base=BASE_URL, api_key=API_KEY)
          debug.info(f'Fetching week info from: {req_url}')
