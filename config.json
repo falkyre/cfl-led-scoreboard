@@ -1,0 +1,19 @@
+{
+    "preferred_teams": [
+        "HAM"
+    ],
+    "rotation": {
+        "enabled": true,
+        "only_preferred": false,
+        "rates": {
+            "pregame": 7,
+            "live": 10,
+            "final": 7
+        },
+        "while_preferred_team_live": false,
+        "while_preferred_team_halftime": true
+    },
+    "data_refresh_rate": 15,
+    "debug": true,
+    "testing": false
+}
