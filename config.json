@@ -1,10 +1,10 @@
 {
     "preferred_teams": [
-        "HAM"
+        "WPG"
     ],
     "rotation": {
         "enabled": true,
-        "only_preferred": false,
+        "only_preferred": true,
         "rates": {
             "pregame": 7,
             "live": 10,
@@ -14,6 +14,6 @@
         "while_preferred_team_halftime": true
     },
     "data_refresh_rate": 15,
-    "debug": true,
+    "debug": false,
     "testing": false
 }
