@@ -20,7 +20,13 @@ Hey, neat-o! You can rotate through multiple games now if you want to! Will stil
 
 ### Pregame Countdown
 
-Currently shows the team logos and the game time or countdown.
+Currently shows the team logos and the game time...
+
+![pregame](imgs/pregame.jpg)
+
+...or countdown.
+
+![countdown](imgs/countdown.jpg)
 
 ### Live scoring updates
 
@@ -28,7 +34,9 @@ The score updates every X (`data_refresh_rate`) seconds. The scoreboard will dis
 
 ### Postgame
 
-Just kind of looks like the pre-game screen but with the final scores. ![final score](imgs/postgame.jpg)
+Just kind of looks like the pre-game screen but with the final scores.
+
+![final score](imgs/postgame.jpg)
 
 ## Roadmap
 
