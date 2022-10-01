@@ -85,7 +85,7 @@ class MainRenderer:
         if halftime_rotate and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
             debug.info("Halftime rotate!")
             rotate = True
-        elif live_rotate and live_game:
+        elif live_rotate:
             debug.info("Live rotate!")
             rotate = True
 
