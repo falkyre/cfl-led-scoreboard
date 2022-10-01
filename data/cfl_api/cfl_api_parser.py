@@ -266,7 +266,7 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
                 'attendance': game['attendance'],
 
                 'state': game['event_status']['name'],   # State of the game.
-                'over': game['event_status']['is_active'],
+                'is_active': game['event_status']['is_active'],
                 'quarter': game['event_status']['quarter'],
                 'time': f"{game['event_status']['minutes']}:{game['event_status']['seconds']}",
 
@@ -421,7 +421,7 @@ def get_overview(game_id):
 
             # State of the game.
             'state': game['data'][0]['event_status']['name'],
-            'over': not game['data'][0]['event_status']['is_active'],
+            'is_active': game['data'][0]['event_status']['is_active'],
             'quarter': game['data'][0]['event_status']['quarter'],
             'minutes': f"{game['data'][0]['event_status']['minutes']:02}",
             'seconds': f"{game['data'][0]['event_status']['seconds']:02}",
