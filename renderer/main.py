@@ -76,18 +76,21 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        rotate = self.data.config.rotation_enabled
+        rotate = False
+        should_rotate = self.data.config.rotation_enabled
         live_game = self.data.showing_preferred_game()
         live_rotate = live_game and self.data.config.rotation_preferred_team_live_enabled
         halftime_rotate = live_game and self.data.config.rotation_preferred_team_live_halftime
-        
+
         if halftime_rotate and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
+            debug.info("Halftime rotate!")
             rotate = True
-        elif live_rotate:
+        elif live_rotate and live_game:
+            debug.info("Live rotate!")
             rotate = True
 
-        debug.info(f'__should_rotate_to_next_game? {rotate}')    
-        return rotate
+        debug.info(f'__should_rotate_to_next_game? {rotate}')
+        return rotate and should_rotate
 
     def __draw_game(self, game):
         debug.info(f'Drawing game. __draw_game({game["id"]})')
