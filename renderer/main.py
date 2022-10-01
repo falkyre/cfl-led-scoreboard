@@ -8,6 +8,7 @@ import debug
 
 class MainRenderer:
     def __init__(self, matrix, data):
+        """Initiates board renderer settings and displays CFL games."""
         self.matrix = matrix
         self.data = data
         self.screen_config = screenConfig("64x32_config")
@@ -22,6 +23,7 @@ class MainRenderer:
         self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8)
 
     def render(self):
+        """Displays CFL games on board depending on state."""
         while True:
             self.starttime = t.time()
             self.data.get_current_date()
@@ -34,18 +36,17 @@ class MainRenderer:
             if self.data.needs_refresh:
                 self.data.refresh_games()
 
-            basic_game = self.data.games[self.data.current_game_index]
-            
+            game = self.data.games[self.data.current_game_index]
 
             # Set the refresh rate
-            rotate_rate = self.__rotate_rate_for_game(basic_game)
+            rotate_rate = self.__rotate_rate_for_game(game)
             refresh_rate = self.data.config.data_refresh_rate
             debug.info(f'Refresh rate: {refresh_rate}s')
 
             # Draw the current game
-            self.__draw_game(basic_game)
+            self.__draw_game(game)
             t.sleep(rotate_rate)
-            
+
             endtime = t.time()
             time_delta = endtime - self.starttime
 
@@ -57,8 +58,8 @@ class MainRenderer:
             if endtime - self.data.games_refresh_time >= refresh_rate:
                 self.data.needs_refresh = True
                 debug.info("Needs refresh!")
-            
-            if self.__should_rotate_to_next_game(basic_game):
+
+            if self.__should_rotate_to_next_game(game):
                 if self.data.needs_refresh:
                     self.data.refresh_games()
                 return self.data.advance_to_next_game()
@@ -94,15 +95,20 @@ class MainRenderer:
 
     def __draw_game(self, game):
         debug.info(f'Drawing game. __draw_game({game["id"]})')
-        
+
         gametime = self.data.get_gametime()
         one_hour_pregame = gametime - timedelta(hours=1)
 
-        if game['state'] == 'Final':
+        if game['state'] == 'In-Progress':
+            if not hasattr(self.data, "current_game_overview") or game != self.data.current_game_overview:
+                game = self.data.current_game()
+            debug.info(f'State: Live Game, checking every {self.__rotate_rate_for_game(game)}s')
+            self._draw_live_game(game)
+        elif game['state'] == 'Final':
             debug.info('State: Post-Game')
             self._draw_post_game(game)
-            #game = self.data.current_game()
-            #self._draw_live_game(game)
+            # game = self.data.current_game()
+            # self._draw_live_game(game)
         elif gametime.now(get_localzone()) > one_hour_pregame and game['state'] == 'Pre-Game':
             debug.info('Countdown til gametime')
             self._draw_countdown(game)
@@ -112,39 +118,35 @@ class MainRenderer:
         elif game['state'] == 'Postponed' or game['state'] == 'Cancelled':
             self.data.advance_to_next_game()
             self.__render_game()
-        else:
-            game = self.data.current_game()
-            debug.info(f'State: Live Game, checking every {self.__rotate_rate_for_game(game)}s')
-            self._draw_live_game(game)
 
     def _draw_pregame(self, game):
-            time = self.data.get_current_date()
-            gamedatetime = self.data.get_gametime()
-            if gamedatetime.day == time.day and gamedatetime.month == time.month:
-                date_text = 'TODAY'
-            else:
-                date_text = gamedatetime.strftime('%A %-d %b').upper()
-            gametime = gamedatetime.strftime("%-I:%M %p")
-            # Center the game time on screen.                
-            date_pos = center_text(self.font_mini.getsize(date_text)[0], 32)
-            gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
-            # Draw the text on the Data image.
-            self.draw.text((date_pos, 0), date_text, font=self.font_mini)
-            self.draw.multiline_text((gametime_pos, 6), gametime, fill=(255, 255, 255), font=self.font_mini, align="center")
-            self.draw.text((25, 15), 'VS', font=self.font)
-            # Put the data on the canvas
-            self.canvas.SetImage(self.image, 0, 0)
-            # TEMP Open the logo image file
-            away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-            home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-            # Put the images on the canvas
-            self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
-            self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
-            # Load the canvas on screen.
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
-            # Refresh the Data image.
-            self.image = Image.new('RGB', (self.width, self.height))
-            self.draw = ImageDraw.Draw(self.image)
+        time = self.data.get_current_date()
+        gamedatetime = self.data.get_gametime()
+        if gamedatetime.day == time.day and gamedatetime.month == time.month:
+            date_text = 'TODAY'
+        else:
+            date_text = gamedatetime.strftime('%A %-d %b').upper()
+        gametime = gamedatetime.strftime("%-I:%M %p")
+        # Center the game time on screen.                
+        date_pos = center_text(self.font_mini.getsize(date_text)[0], 32)
+        gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
+        # Draw the text on the Data image.
+        self.draw.text((date_pos, 0), date_text, font=self.font_mini)
+        self.draw.multiline_text((gametime_pos, 6), gametime, fill=(255, 255, 255), font=self.font_mini, align="center")
+        self.draw.text((25, 15), 'VS', font=self.font)
+        # Put the data on the canvas
+        self.canvas.SetImage(self.image, 0, 0)
+        # TEMP Open the logo image file
+        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        # Put the images on the canvas
+        self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
+        self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
+        # Load the canvas on screen.
+        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        # Refresh the Data image.
+        self.image = Image.new('RGB', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
 
     def _draw_countdown(self, game):
         time = self.data.get_current_date()
@@ -155,7 +157,7 @@ class MainRenderer:
             gt_diff = game_time - time
             min_to_go = round(gt_diff.total_seconds() / 60)
             gametime = f'{min_to_go} min'
-            
+
         # Center the game time on screen.
         gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
         # Draw the text on the Data image.
@@ -179,6 +181,7 @@ class MainRenderer:
         # t.sleep(1)
 
     def _draw_live_game(self, game):
+        
         homescore = '{0:02d}'.format(game['home_score'])
         awayscore = '{0:02d}'.format(game['away_score'])
         last_play_code = game['play_result_type_id']
@@ -241,7 +244,7 @@ class MainRenderer:
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         
-        self.data.needs_refresh = True
+        # self.data.needs_refresh = True
         
         # Check if the game is over
         if game['state'] == 'Final':
