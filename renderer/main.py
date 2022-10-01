@@ -35,6 +35,7 @@ class MainRenderer:
                 self.data.refresh_games()
 
             basic_game = self.data.games[self.data.current_game_index]
+            
 
             # Set the refresh rate
             rotate_rate = self.__rotate_rate_for_game(basic_game)
@@ -77,7 +78,7 @@ class MainRenderer:
     def __should_rotate_to_next_game(self, game):
         rotate = self.data.config.rotation_enabled
         live_game = self.data.showing_preferred_game()
-        live_rotate =  live_game and self.data.config.rotation_preferred_team_live_enabled
+        live_rotate = live_game and self.data.config.rotation_preferred_team_live_enabled
         halftime_rotate = live_game and self.data.config.rotation_preferred_team_live_halftime
         
         if halftime_rotate and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:

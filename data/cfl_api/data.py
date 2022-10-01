@@ -15,7 +15,6 @@ class Data:
 
         # What game do we want to start on?
         self.current_game_index = 0
-        self.current_game_overview = None
         self.current_division_index = 0
 
         # Parse today's date and see if we should use today or yesterday
@@ -47,7 +46,7 @@ class Data:
     def refresh_games(self, game_id=None):
         attempts_remaining = 5
         while attempts_remaining > 0:
-            if not game_id:
+            if game_id is None:
                 try:
                     time_since_refresh = t.time() - self.games_refresh_time
                     if not time_since_refresh > self.config.data_refresh_rate:
@@ -60,17 +59,14 @@ class Data:
                             
                         t.sleep(self.config.data_refresh_rate - time_since_refresh)
 
-                    all_games = cflparser.get_all_games()
+                    self.games = cflparser.get_all_games()
 
                     if self.config.rotation_only_preferred and self.config.preferred_teams:
                         filtered_games = self.__filter_list_of_games(
-                            all_games, self.config.preferred_teams)
+                            self.games, self.config.preferred_teams)
                         if filtered_games:
                             debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
                             self.games = filtered_games
-
-                    else:
-                        self.games = all_games
 
                     self.games_refresh_time = t.time()
                     self.needs_refresh = False
@@ -92,7 +88,7 @@ class Data:
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
             else:
                 try:
-                    if not self.current_game_overview:
+                    if not hasattr(self, "current_game_overview"):
                         self.current_game_overview = cflparser.get_overview(
                             game_id)
 
@@ -108,7 +104,7 @@ class Data:
                         self.current_game_overview = cflparser.get_overview(
                             game_id)
 
-                    self.games_refresh_time = t.time()
+                    #self.games_refresh_time = t.time()
                     self.needs_refresh = False
                     self.network_issues = False
                     break
@@ -140,8 +136,9 @@ class Data:
         return gametime
 
     def current_game(self):
-        if len(self.games) > 0:
-            return self.refresh_games(game_id=self.games[self.current_game_index]['id'])
+        if self.games:
+            self.refresh_games(self.games[self.current_game_index]['id'])
+            return self.current_game_overview
 
     def showing_preferred_game(self):
         #next_game = self.games[self.__next_game_index()]
