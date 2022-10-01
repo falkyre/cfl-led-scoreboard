@@ -140,7 +140,7 @@ class MainRenderer:
         away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower()))
         home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower()))
         
-        max_wh = 30 # the maximum height and width
+        max_wh = 32 # the maximum height and width
         width1, height1 = away_team_logo.size
         width2, height2 = home_team_logo.size
         ratio1 = float(max_wh/height1)
@@ -149,8 +149,8 @@ class MainRenderer:
         home_logo_out = home_team_logo.resize((int(width2*ratio2), int(height2*ratio2)), Image.BOX).transpose(Image.FLIP_LEFT_RIGHT)
 
         # Put the images on the canvas
-        self.canvas.SetImage(away_logo_out.convert("RGB"), -14, 1)
-        self.canvas.SetImage(home_logo_out.convert("RGB"), 45, 1)
+        self.canvas.SetImage(away_logo_out.convert("RGB"), -15, 0)
+        self.canvas.SetImage(home_logo_out.convert("RGB"), 44, 0)
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
         # Refresh the Data image.
@@ -179,7 +179,7 @@ class MainRenderer:
         away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower()))
         home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower()))
         
-        max_wh = 30 # the maximum height and width
+        max_wh = 32 # the maximum height and width
         width1, height1 = away_team_logo.size
         width2, height2 = home_team_logo.size
         ratio1 = float(max_wh/height1)
@@ -188,8 +188,8 @@ class MainRenderer:
         home_logo_out = home_team_logo.resize((int(width2*ratio2), int(height2*ratio2)), Image.BOX).transpose(Image.FLIP_LEFT_RIGHT)
 
         # Put the images on the canvas
-        self.canvas.SetImage(away_logo_out.convert("RGB"), -14, 1)
-        self.canvas.SetImage(home_logo_out.convert("RGB"), 45, 1)
+        self.canvas.SetImage(away_logo_out.convert("RGB"), -15, 0)
+        self.canvas.SetImage(home_logo_out.convert("RGB"), 44, 0)
 
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
