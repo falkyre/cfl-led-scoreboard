@@ -10,7 +10,7 @@
             "live": 10,
             "final": 7
         },
-        "while_preferred_team_live": false,
+        "while_preferred_team_live": true,
         "while_preferred_team_halftime": true
     },
     "data_refresh_rate": 15,

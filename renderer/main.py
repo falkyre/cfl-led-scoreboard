@@ -77,21 +77,20 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game):
-        rotate = False
-        should_rotate = self.data.config.rotation_enabled
+        rotate = self.data.config.rotation_enabled
         live_game = self.data.showing_preferred_game()
-        live_rotate = live_game and self.data.config.rotation_preferred_team_live_enabled
         halftime_rotate = live_game and self.data.config.rotation_preferred_team_live_halftime
 
-        if halftime_rotate and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
-            debug.info("Halftime rotate!")
-            rotate = True
-        elif live_rotate:
-            debug.info("Live rotate!")
-            rotate = True
+        if live_game and self.data.config.rotation_preferred_team_live_enabled:
+            if halftime_rotate and hasattr(game, 'play_by_play') and game['play_by_play'][-1]['play_result_type_id'] == 8:
+                debug.info("Halftime rotate!")
+                rotate = True
+            else:
+                debug.info("Live rotate!")
+                rotate = True
 
         debug.info(f'__should_rotate_to_next_game? {rotate}')
-        return rotate and should_rotate
+        return rotate
 
     def __draw_game(self, game):
         debug.info(f'Drawing game. __draw_game({game["id"]})')
@@ -127,6 +126,7 @@ class MainRenderer:
         else:
             date_text = gamedatetime.strftime('%A %-d %b').upper()
         gametime = gamedatetime.strftime("%-I:%M %p")
+
         # Center the game time on screen.                
         date_pos = center_text(self.font_mini.getsize(date_text)[0], 32)
         gametime_pos = center_text(self.font_mini.getsize(gametime)[0], 32)
@@ -137,11 +137,20 @@ class MainRenderer:
         # Put the data on the canvas
         self.canvas.SetImage(self.image, 0, 0)
         # TEMP Open the logo image file
-        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower()))
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower()))
+        
+        max_wh = 32 # the maximum height and width
+        width1, height1 = away_team_logo.size
+        width2, height2 = home_team_logo.size
+        ratio1 = float(max_wh/height1)
+        ratio2 = float(max_wh/height2)
+        away_logo_out = away_team_logo.resize((int(width1*ratio1), int(height1*ratio1)), Image.BOX)
+        home_logo_out = home_team_logo.resize((int(width2*ratio2), int(height2*ratio2)), Image.BOX).transpose(Image.FLIP_LEFT_RIGHT)
+
         # Put the images on the canvas
-        self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
-        self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
+        self.canvas.SetImage(away_logo_out.convert("RGB"), -17, 0)
+        self.canvas.SetImage(home_logo_out.convert("RGB"), 44, 0)
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
         # Refresh the Data image.
@@ -152,7 +161,7 @@ class MainRenderer:
         time = self.data.get_current_date()
         game_time = self.data.get_gametime()
         if not time < game_time:
-            gametime = f'Kickoff!'
+            gametime = 'Kickoff!'
         else:
             gt_diff = game_time - time
             min_to_go = round(gt_diff.total_seconds() / 60)
@@ -167,11 +176,20 @@ class MainRenderer:
         # Put the data on the canvas
         self.canvas.SetImage(self.image, 0, 0)
         # TEMP Open the logo image file
-        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower()))
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower()))
+        
+        max_wh = 32 # the maximum height and width
+        width1, height1 = away_team_logo.size
+        width2, height2 = home_team_logo.size
+        ratio1 = float(max_wh/height1)
+        ratio2 = float(max_wh/height2)
+        away_logo_out = away_team_logo.resize((int(width1*ratio1), int(height1*ratio1)), Image.BOX)
+        home_logo_out = home_team_logo.resize((int(width2*ratio2), int(height2*ratio2)), Image.BOX).transpose(Image.FLIP_LEFT_RIGHT)
+
         # Put the images on the canvas
-        self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 12)
-        self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 12)
+        self.canvas.SetImage(away_logo_out.convert("RGB"), -17, 0)
+        self.canvas.SetImage(home_logo_out.convert("RGB"), 44, 0)
 
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
@@ -181,7 +199,6 @@ class MainRenderer:
         # t.sleep(1)
 
     def _draw_live_game(self, game):
-        
         homescore = '{0:02d}'.format(game['home_score'])
         awayscore = '{0:02d}'.format(game['away_score'])
         last_play_code = game['play_result_type_id']
@@ -231,7 +248,7 @@ class MainRenderer:
         
         # TEMP Open the logo image file
         away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX).transpose(Image.FLIP_LEFT_RIGHT)
         
         # Put the images on the canvas
         self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 0)
@@ -263,7 +280,7 @@ class MainRenderer:
         self.canvas.SetImage(self.image, 0, 0)
         # TEMP Open the logo image file
         away_team_logo = Image.open('logos/{}.png'.format(game['away_team_abbrev'].lower())).resize((20, 20), Image.BOX)
-        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX)
+        home_team_logo = Image.open('logos/{}.png'.format(game['home_team_abbrev'].lower())).resize((20, 20), Image.BOX).transpose(Image.FLIP_LEFT_RIGHT)
         # Put the images on the canvas
         self.canvas.SetImage(away_team_logo.convert("RGB"), 1, 0)
         self.canvas.SetImage(home_team_logo.convert("RGB"), 43, 0)
