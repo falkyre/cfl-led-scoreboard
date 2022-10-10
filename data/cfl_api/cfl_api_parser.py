@@ -407,7 +407,6 @@ def get_overview(game_id):
             raise ValueError(errors)
 
         play_by_play = game['data'][0]['play_by_play']
-        pbp_has_plays = len(play_by_play) > 0
 
         output = {
             'id': game['data'][0]['game_id'],  # ID of the game
@@ -427,16 +426,16 @@ def get_overview(game_id):
             'seconds': f"{game['data'][0]['event_status']['seconds']:02}",
 
             'play_by_play': play_by_play,
-            'possession': play_by_play[-1]['team_abbreviation'] if pbp_has_plays else "",
+            'possession': play_by_play[-1]['team_abbreviation'] if play_by_play else "",
             # Current spot.
-            'spot': play_by_play[-1]['field_position_end'] if pbp_has_plays else "",
-            'redzone': play_by_play[-1]['is_in_red_zone'] if pbp_has_plays else "",
+            'spot': play_by_play[-1]['field_position_end'] if play_by_play else "",
+            'redzone': play_by_play[-1]['is_in_red_zone'] if play_by_play else "",
             # Current down.
-            'down': play_by_play[-1]['down'] if pbp_has_plays else "",
+            'down': play_by_play[-1]['down'] if play_by_play else "",
             # Current yards to go.
-            'ytg': play_by_play[-1]['yards_to_go'] if pbp_has_plays else "",
+            'ytg': play_by_play[-1]['yards_to_go'] if play_by_play else "",
             # Last play ID
-            'play_result_type_id': play_by_play[-1]['play_result_type_id'] if pbp_has_plays else "",
+            'play_result_type_id': play_by_play[-1]['play_result_type_id'] if play_by_play else "",
 
             # Home team name abbreviation
             'home_team_abbrev': game['data'][0]['team_2']['abbreviation'],

@@ -43,10 +43,6 @@ class MainRenderer:
             refresh_rate = self.data.config.data_refresh_rate
             debug.info(f'Refresh rate: {refresh_rate}s')
 
-            # Draw the current game
-            self.__draw_game(game)
-            t.sleep(rotate_rate)
-
             endtime = t.time()
             time_delta = endtime - self.starttime
 
@@ -59,9 +55,11 @@ class MainRenderer:
                 self.data.needs_refresh = True
                 debug.info("Needs refresh!")
 
+            # Draw the current game
+            self.__draw_game(game)
+            t.sleep(rotate_rate)
+
             if self.__should_rotate_to_next_game(game):
-                if self.data.needs_refresh:
-                    self.data.refresh_games()
                 return self.data.advance_to_next_game()
 
     def __rotate_rate_for_game(self, game):
@@ -99,14 +97,13 @@ class MainRenderer:
         one_hour_pregame = gametime - timedelta(hours=1)
 
         if game['state'] == 'In-Progress':
-            if not hasattr(self.data, "current_game_overview") or game != self.data.current_game_overview:
-                game = self.data.current_game()
             debug.info(f'State: Live Game, checking every {self.__rotate_rate_for_game(game)}s')
+            self.data.refresh_games(game['id'])
+            game = self.data.games[self.data.current_game_index]
             self._draw_live_game(game)
         elif game['state'] == 'Final':
             debug.info('State: Post-Game')
             self._draw_post_game(game)
-            # game = self.data.current_game()
             # self._draw_live_game(game)
         elif gametime.now(get_localzone()) > one_hour_pregame and game['state'] == 'Pre-Game':
             debug.info('Countdown til gametime')
@@ -124,7 +121,7 @@ class MainRenderer:
         if gamedatetime.day == time.day and gamedatetime.month == time.month:
             date_text = 'TODAY'
         else:
-            date_text = gamedatetime.strftime('%A %-d %b').upper()
+            date_text = gamedatetime.strftime('%a %-I:%M %p').upper()
         gametime = gamedatetime.strftime("%-I:%M %p")
 
         # Center the game time on screen.                
@@ -199,6 +196,7 @@ class MainRenderer:
         # t.sleep(1)
 
     def _draw_live_game(self, game):
+        debug.info(game)
         homescore = '{0:02d}'.format(game['home_score'])
         awayscore = '{0:02d}'.format(game['away_score'])
         last_play_code = game['play_result_type_id']
