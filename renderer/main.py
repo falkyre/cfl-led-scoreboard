@@ -116,6 +116,9 @@ class MainRenderer:
             self.data.advance_to_next_game()
             self.__render_game()
 
+        if self.data.needs_refresh:
+            self.data.refresh_games()
+
     def _draw_pregame(self, game):
         time = self.data.get_current_date()
         gamedatetime = self.data.get_gametime()
