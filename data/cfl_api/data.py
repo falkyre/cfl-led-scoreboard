@@ -94,22 +94,16 @@ class Data:
                     t.sleep(cflparser.NETWORK_RETRY_SLEEP_TIME)
             else:
                 try:
-                    if not hasattr(self, "current_game_overview"):
-                        self.current_game_overview = cflparser.get_overview(
-                            game_id)
-                        self.games_refresh_time = t.time()
-
-                    if game_id == self.current_game_overview['id']:
-                        if not hasattr(self, "games_refresh_time"):
-                            self.games_refresh_time = 0
-                        time_since_refresh = t.time() - self.games_refresh_time
-                        if not self.first_refresh and not time_since_refresh > self.config.data_refresh_rate:
-                            delay = self.config.data_refresh_rate - time_since_refresh
-                            debug.info(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
-                            t.sleep(
-                                self.config.data_refresh_rate - time_since_refresh)
-                        self.current_game_overview = cflparser.get_overview(
-                            game_id)
+                    if not hasattr(self, "games_refresh_time"):
+                        self.games_refresh_time = 0
+                    time_since_refresh = t.time() - self.games_refresh_time
+                    if not self.first_refresh and not time_since_refresh > self.config.data_refresh_rate:
+                        delay = self.config.data_refresh_rate - time_since_refresh
+                        debug.info(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
+                        t.sleep(
+                            self.config.data_refresh_rate - time_since_refresh)
+                    self.games[self.current_game_index] = cflparser.get_overview(
+                        game_id)
 
                     self.first_refresh = False
                     self.games_refresh_time = t.time()
@@ -143,19 +137,6 @@ class Data:
         # gametime = datetime.strptime(self.games[self.current_game_index]['date'], "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=(tz_diff / 60 / 60 * -1))
         gametime = raw_gt.astimezone(tz)
         return gametime
-
-    def current_game(self):
-        """Return the current game overview data (detailed game)."""
-        time_since_refresh = t.time() - self.games_refresh_time
-        if not self.first_refresh and not time_since_refresh > self.config.data_refresh_rate:
-            delay = self.config.data_refresh_rate - time_since_refresh
-            debug.info(f"current_game(): Rate limiting get_overview({self.games[self.current_game_index]['id']}). Sleeping for {round(delay)}s")
-            t.sleep(
-                self.config.data_refresh_rate - time_since_refresh)
-        self.first_refresh = False
-        if self.games:
-            self.refresh_games(self.games[self.current_game_index]['id'])
-            return self.current_game_overview
 
     def showing_preferred_game(self):
         """Check if showing preferred team in current game."""
