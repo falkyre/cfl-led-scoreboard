@@ -28,7 +28,6 @@ class Data:
         self.current_week = None
         self.current_season = None
         self.preseason = None
-        self.get_season_info()
 
     # Fetch the teams info
         self.games_refresh_time = config.data_refresh_rate

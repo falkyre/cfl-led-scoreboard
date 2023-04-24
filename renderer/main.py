@@ -125,7 +125,7 @@ class MainRenderer:
         if gamedatetime.day == time.day and gamedatetime.month == time.month:
             date_text = 'TODAY'
         else:
-            date_text = gamedatetime.strftime('%a %-I:%M %p').upper()
+            date_text = gamedatetime.strftime('%a %b %-d').upper()
         gametime = gamedatetime.strftime("%-I:%M %p")
 
         # TEMP Open the logo image file
