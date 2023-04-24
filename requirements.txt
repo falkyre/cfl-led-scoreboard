@@ -2,4 +2,4 @@ pydantic>=1.10.2
 python-dotenv>=0.20.0
 pytz>=2022.2.1
 requests==2.22.0
-tzlocal>=4.2
+tzlocal~=2.0
