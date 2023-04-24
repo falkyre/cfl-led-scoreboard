@@ -243,6 +243,9 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
 
         if not TESTING:
             season, week, preseason = get_current_season()
+            if preseason:
+                week = int(week) - 4 # Preseason uses negative week filter in url
+                    
             req_url = SCHEDULE_URL.format(base=BASE_URL, year=season, api_key=API_KEY, week_filter=f'&filter[week][eq]={week}')
             debug.info(f'Fetching games from: {req_url}')
             data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
