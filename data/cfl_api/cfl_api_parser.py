@@ -318,15 +318,11 @@ def get_current_season(year=CURRENT_YEAR):
         week = season_data['data']['current']['week']
         is_preseason = None
 
-        print(week)
-
         if week.isnumeric():
             is_preseason = False
         elif week.split("P")[1].isnumeric():
             week = week.split("P")[1]
             is_preseason = True
-
-        print(week)
 
         return [season, week, is_preseason]
 
