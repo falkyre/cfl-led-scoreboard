@@ -306,7 +306,7 @@ class MainRenderer:
         self.canvas.Clear()
         # Go through the frames
         x = 0
-        while x is not 3:
+        while x != 3:
             try:
                 ball.seek(frameNo)
             except EOFError:
@@ -318,7 +318,7 @@ class MainRenderer:
             frameNo += 1
             t.sleep(0.05)
         x = 0
-        while x is not 3:
+        while x != 3:
             try:
                 words.seek(frameNo)
             except EOFError:
@@ -339,7 +339,7 @@ class MainRenderer:
         self.canvas.Clear()
         # Go through the frames
         x = 0
-        while x is not 3:
+        while x != 3:
             try:
                 im.seek(frameNo)
             except EOFError:

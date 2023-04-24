@@ -27,6 +27,7 @@ class Data:
         self.time_since_day_refresh = t.time()
         self.current_week = None
         self.current_season = None
+        self.preseason = None
         self.get_season_info()
 
     # Fetch the teams info
@@ -40,7 +41,7 @@ class Data:
 
     def get_season_info(self):
         """Get current season & week."""
-        [self.current_season, self.current_week] = cflparser.get_current_season()
+        [self.current_season, self.current_week, self.preseason] = cflparser.get_current_season()
 
     def get_current_date(self):
         """Get current local datetime."""
@@ -60,7 +61,7 @@ class Data:
                         time_since_day_start = t.time() - self.time_since_day_refresh
 
                         if time_since_day_start > 86400:
-                            self.current_week = cflparser.get_current_week()
+                            self.current_week = cflparser.get_current_season()[1]
 
                         t.sleep(self.config.data_refresh_rate -
                                 time_since_refresh)
