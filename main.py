@@ -11,19 +11,19 @@ SCRIPT_VERSION = "1.0.0"
 # Get supplied command line arguments
 args = args()
 
+# Read scoreboard options from config.json if it exists
+config = ScoreboardConfig("config", args)
+debug.set_debug_status(config.debug)
+
 # Check for led configuration arguments
 matrixOptions = led_matrix_options(args)
 
 # Initialize the matrix
-matrix = RGBMatrix(options = matrixOptions)
+matrix = RGBMatrix(options=matrixOptions)
 
 # Print some basic info on startup
 debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
 
-# Read scoreboard options from config.json if it exists
-config = ScoreboardConfig("config", args)
-debug.set_debug_status(config)
-
+# Initialize the config & Renderer
 data = Data(config)
-
 MainRenderer(matrix, data).render()

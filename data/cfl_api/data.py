@@ -56,7 +56,7 @@ class Data:
                     time_since_refresh = t.time() - self.games_refresh_time
                     if not time_since_refresh > self.config.data_refresh_rate:
                         delay = self.config.data_refresh_rate - time_since_refresh
-                        debug.info(f"Rate limiting games refresh. Sleeping for {round(delay)}s")
+                        debug.warning(f"Rate limiting games refresh. Sleeping for {round(delay)}s")
                         time_since_day_start = t.time() - self.time_since_day_refresh
 
                         if time_since_day_start > 86400:
@@ -99,7 +99,7 @@ class Data:
                     time_since_refresh = t.time() - self.games_refresh_time
                     if not self.first_refresh and not time_since_refresh > self.config.data_refresh_rate:
                         delay = self.config.data_refresh_rate - time_since_refresh
-                        debug.info(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
+                        debug.warning(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
                         t.sleep(
                             self.config.data_refresh_rate - time_since_refresh)
                     self.games[self.current_game_index] = cflparser.get_overview(
@@ -152,7 +152,7 @@ class Data:
                     if team in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
                         showing_preferred_team = True
 
-        debug.info(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
+        debug.log(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
         return showing_preferred_team
 
     def advance_to_next_game(self):
