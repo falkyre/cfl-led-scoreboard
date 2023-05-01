@@ -71,7 +71,7 @@ class Data:
                         filtered_games = self.__filter_list_of_games(
                             self.games, self.config.preferred_teams)
                         if filtered_games:
-                            debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
+                            debug.log(f'Filtering games for preferred team - {self.config.preferred_teams}')
                             self.games = filtered_games
 
                     self.games_refresh_time = t.time()
@@ -157,7 +157,7 @@ class Data:
 
     def advance_to_next_game(self):
         """Advances game index to next game."""
-        debug.info("Advancing to next game.")
+        debug.log("Advancing to next game.")
         self.current_game_index = self.__next_game_index()
 
     def __filter_list_of_games(self, games, teams):

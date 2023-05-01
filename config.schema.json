@@ -41,7 +41,7 @@
   "definitions": {
     "Team": {
       "title": "Team",
-      "description": "An enumeration.",
+      "description": "CFL Team",
       "enum": [
         "BC",
         "CGY",

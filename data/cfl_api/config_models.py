@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import List
 from enum import Enum
 from pydantic import BaseModel, Field
-import debug
 
 
 class Rates(BaseModel):
@@ -44,13 +43,15 @@ class ConfigModel(BaseModel):
     preferred_teams: List[Team] = Field(..., title="Preferred Teams",
                                         description="List of preferred teams to display. First is priority.", unique_items=True)
     rotation: Rotation
-    data_refresh_rate: float = Field(
-        ..., ge=5, description="Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)")
+    helmet_logos: bool = Field(
+        default=False,
+        title="Helmet Logos",
+        description="Enable helmet logos.")
+    data_refresh_rate: float = Field(...,
+                                     ge=5, description="Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)")
     debug: bool = Field(..., description="Enable debugging.")
     testing: bool = Field(..., description="Enabled test data.")
 
     class Config:
         title = 'CFL LED Scoreboard Config Schema'
         use_enum_values = True
-
-# debug.log(ConfigModel.schema_json(indent=2))

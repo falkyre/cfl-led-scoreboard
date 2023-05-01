@@ -2,6 +2,7 @@
     "preferred_teams": [
         "HAM"
     ],
+    "helmet_logos": false,
     "rotation": {
         "enabled": true,
         "only_preferred": false,
