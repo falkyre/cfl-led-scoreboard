@@ -142,27 +142,32 @@ class MainRenderer:
         if self.data.config.helmet_logos is True:
             home_team_logo = home_team_logo.transpose(Image.FLIP_LEFT_RIGHT)
             # Put the images on the canvas
-            self.image.paste(away_team_logo, (round(-0.265 * self.width ), 0), mask=away_team_logo)
-            self.image.paste(home_team_logo, (round(0.6875 * self.width ), 0), mask=home_team_logo)
+            self.image.paste(away_team_logo, (round(-0.17 * self.width ), 0), mask=away_team_logo)
+            self.image.paste(home_team_logo, (round(0.61 * self.width ), 0), mask=home_team_logo)
 
         else:
             # Put the images on the canvas
-            self.image.paste(away_team_logo, (round(-0.165 * self.width), round(0.12 * self.height)), mask=away_team_logo)
-            self.image.paste(home_team_logo, (round(0.637 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            if game['home_team_abbrev'] == "CGY":
+                self.image.paste(home_team_logo, (round(0.505 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            else:
+                self.image.paste(home_team_logo, (round(0.585 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            self.image.paste(away_team_logo, (round(-0.11 * self.width), round(0.12 * self.height)), mask=away_team_logo)
 
         # Center the game time on screen
         date_pos = center_text(self.font_mini.getsize(date_text)[0], self.width / 2)
         gametime_pos = center_text(self.font_mini.getsize(gametime)[0], self.width / 2)
 
         # Draw the text on the Data image.
-        self.draw.text((date_pos, 0), date_text, font=self.font_mini)
+        self.draw.text((date_pos, 0), date_text, font=self.font_mini, stroke_width=1, stroke_fill=(0,0,0))
         self.draw.multiline_text((
             gametime_pos, round(0.1875 * self.height)),
             gametime,
             fill=(255, 255, 255),
+            stroke_width=1,
+            stroke_fill=(0,0,0),
             font=self.font_mini,
             align="center")
-        self.draw.text((round(0.391 * self.width), round(0.46875 * self.height)), 'VS', font=self.font)
+        self.draw.text((round(0.391 * self.width), round(0.46875 * self.height)), 'VS', font=self.font, stroke_width=1, stroke_fill=(0,0,0))
         # Put the data on the canvas
         self.canvas.SetImage(self.image, 0, 0)
         # Load the canvas on screen.
@@ -189,21 +194,24 @@ class MainRenderer:
         if self.data.config.helmet_logos is True:
             home_team_logo = home_team_logo.transpose(Image.FLIP_LEFT_RIGHT)
             # Put the images on the canvas
-            self.image.paste(away_team_logo, (round(-0.265 * self.width ), 0), mask=away_team_logo)
-            self.image.paste(home_team_logo, (round(0.6875 * self.width ), 0), mask=home_team_logo)
+            self.image.paste(away_team_logo, (round(-0.17 * self.width ), 0), mask=away_team_logo)
+            self.image.paste(home_team_logo, (round(0.61 * self.width ), 0), mask=home_team_logo)
 
         else:
             # Put the images on the canvas
-            self.image.paste(away_team_logo, (round(-0.165 * self.width), round(0.12 * self.height)), mask=away_team_logo)
-            self.image.paste(home_team_logo, (round(0.637 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            if game['home_team_abbrev'] == "CGY":
+                self.image.paste(home_team_logo, (round(0.505 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            else:
+                self.image.paste(home_team_logo, (round(0.585 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            self.image.paste(away_team_logo, (round(-0.11 * self.width), round(0.12 * self.height)), mask=away_team_logo)
 
         # Center the game time on screen.
         gametime_pos = center_text(self.font_mini.getsize(gametime)[0], self.width / 2)
 
         # Draw the text on the Data image.
-        self.draw.text((round(0.4531 * self.width), 0), 'IN', font=self.font_mini)
-        self.draw.multiline_text((gametime_pos, round(0.1875 * self.height)), gametime, fill=(255, 255, 255), font=self.font_mini, align="center")
-        self.draw.text((round(0.391 * self.height), round(0.46875 * self.height)), 'VS', font=self.font)
+        self.draw.text((round(0.4531 * self.width), 0), 'IN', font=self.font_mini, stroke_width=1, stroke_fill=(0,0,0))
+        self.draw.multiline_text((gametime_pos, round(0.1875 * self.height)), gametime, fill=(255, 255, 255), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+        self.draw.text((round(0.391 * self.width), round(0.46875 * self.height)), 'VS', font=self.font, stroke_width=1, stroke_fill=(0,0,0))
 
         # Put the data on the canvas
         self.canvas.SetImage(self.image, 0, 0)
@@ -254,25 +262,25 @@ class MainRenderer:
         if game['possession']:
             pos = game['possession']
             info_pos = center_text(self.font_mini.getsize(str(pos))[0], self.width / 2)
-            self.draw.multiline_text((info_pos, round(0.4063 * self.height)), str(pos), fill=(pos_colour), font=self.font_mini, align="center")
+            self.draw.multiline_text((info_pos, round(0.4063 * self.height)), str(pos), fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
         if game['down'] and game['ytg']:
             down = f"{game['down']}&{game['ytg']}"
             info_pos = center_text(self.font_mini.getsize(str(down))[0], self.width / 2)
-            self.draw.multiline_text((info_pos, round(0.5937 * self.height)), str(down), fill=(pos_colour), font=self.font_mini, align="center")
+            self.draw.multiline_text((info_pos, round(0.5937 * self.height)), str(down), fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
         if game['spot']:
             spot = f"{game['spot']}"
             info_pos = center_text(self.font_mini.getsize(spot)[0], self.width / 2)
-            self.draw.multiline_text((info_pos, round(0.7812 * self.height)), spot, fill=(pos_colour), font=self.font_mini, align="center")
+            self.draw.multiline_text((info_pos, round(0.7812 * self.height)), spot, fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
 
         # Set the position of the information on screen.
         home_score_size = self.font.getsize(homescore)[0]
         time_period_pos = center_text(self.font_mini.getsize(time_period)[0], self.width / 2)
         quarter_pos = center_text(self.font_mini.getsize(quarter)[0], self.width / 2)
 
-        self.draw.multiline_text((quarter_pos, 0), quarter, fill=(255, 255, 255), font=self.font_mini, align="center")
-        self.draw.multiline_text((time_period_pos, round(0.1875 * self.height)), time_period, fill=(255, 255, 255), font=self.font_mini, align="center")
-        self.draw.multiline_text((round(0.0938 * self.width), round(0.5938 * self.height)), awayscore, fill=(255, 255, 255), font=self.font, align="center")
-        self.draw.multiline_text((round(0.9219 * self.width) - home_score_size, round(0.5938 * self.height)), homescore, fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((quarter_pos, 0), quarter, fill=(255, 255, 255), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+        self.draw.multiline_text((time_period_pos, round(0.1875 * self.height)), time_period, fill=(255, 255, 255), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+        self.draw.multiline_text((round(0.0938 * self.width), round(0.5938 * self.height)), awayscore, fill=(255, 255, 255), font=self.font, align="center", stroke_width=1, stroke_fill=(0,0,0))
+        self.draw.multiline_text((round(0.9219 * self.width) - home_score_size, round(0.5938 * self.height)), homescore, fill=(255, 255, 255), font=self.font, align="center", stroke_width=1, stroke_fill=(0,0,0))
 
         # Put the data on the canvas
         self.canvas.SetImage(self.image, 0, 0)
@@ -284,8 +292,6 @@ class MainRenderer:
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
 
-        # self.data.needs_refresh = True
-
         # Check if the game is over
         if game['state'] == 'Final':
             debug.log('GAME OVER')
@@ -293,28 +299,39 @@ class MainRenderer:
 
     def _draw_post_game(self, game):
         # TEMP Open the logo image file
-        away_team_logo = get_logo(game['away_team_abbrev'], round(0.906 * self.height), self.data.config.helmet_logos)
-        home_team_logo = get_logo(game['home_team_abbrev'], round(0.906 * self.height), self.data.config.helmet_logos)
+        away_team_logo = get_logo(game['away_team_abbrev'], self.height, self.data.config.helmet_logos)
+        home_team_logo = get_logo(game['home_team_abbrev'], self.height, self.data.config.helmet_logos)
 
         # Flip home logo if using helmets
         if self.data.config.helmet_logos is True:
             home_team_logo = home_team_logo.transpose(Image.FLIP_LEFT_RIGHT)
+            # Put the images on the canvas
+            self.image.paste(away_team_logo, (round(-0.17 * self.width ), 0), mask=away_team_logo)
+            self.image.paste(home_team_logo, (round(0.61 * self.width ), 0), mask=home_team_logo)
 
-        # Put the images on the canvas
-        self.image.paste(away_team_logo, (round(-0.0938 * self.width), round(0.0938 * self.height)), mask=away_team_logo)
-        self.image.paste(home_team_logo, (round(0.625 * self.width), round(0.0938 * self.height)), mask=home_team_logo)
+        else:
+            # Put the images on the canvas
+            if game['home_team_abbrev'] == "CGY":
+                self.image.paste(home_team_logo, (round(0.505 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            else:
+                self.image.paste(home_team_logo, (round(0.585 * self.width), round(0.12 * self.height)), mask=home_team_logo)
+            self.image.paste(away_team_logo, (round(-0.11 * self.width), round(0.12 * self.height)), mask=away_team_logo)
+
         # Prepare the data
         score = '{}-{}'.format(game['away_score'], game['home_score'])
+
         # Set the position of the information on screen.
         score_position = center_text(self.font.getsize(score)[0], self.width / 2)
         # Draw the text on the Data image.
-        self.draw.multiline_text((score_position, round(-0.03125 * self.height)), score, fill=(255, 255, 255), font=self.font, align="center")
-        self.draw.multiline_text((round(0.375 * self.width), round(0.348 * self.height)), "FINAL", fill=(255, 255, 255), font=self.font_mini,align="center")
+        self.draw.multiline_text((score_position, 0), score, fill=(255, 255, 255), font=self.font, align="center", stroke_width=1, stroke_fill=(0,0,0))
+        self.draw.multiline_text((round(0.375 * self.width), round(0.38 * self.height)), "FINAL", fill=(255, 255, 255), font=self.font_mini,align="center", stroke_width=1, stroke_fill=(0,0,0))
+
         # Put the data on the canvas
         self.canvas.SetImage(self.image, 0, 0)
 
         # Load the canvas on screen.
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
         # Refresh the Data image.
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
