@@ -111,7 +111,6 @@ class MainRenderer:
         elif game['state'] == 'Final':
             debug.log('State: Post-Game')
             self._draw_post_game(game)
-            # self._draw_live_game(game)
         elif gametime.now(get_localzone()) > one_hour_pregame and game['state'] == 'Pre-Game':
             debug.log('Countdown til gametime')
             self._draw_countdown(game)
@@ -119,6 +118,7 @@ class MainRenderer:
             debug.log('State: Pre-Game')
             self._draw_pregame(game)
         elif game['state'] == 'Postponed' or game['state'] == 'Cancelled':
+            debug.log(f'State: Game {game["state"]}.')
             self.data.advance_to_next_game()
             self.__render_game()
 
