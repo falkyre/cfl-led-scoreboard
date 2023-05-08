@@ -14,6 +14,11 @@
     "rotation": {
       "$ref": "#/definitions/Rotation"
     },
+    "helmet_logos": {
+      "title": "Helmet Logos",
+      "description": "Enable helmet logo display.",
+      "type": "boolean"
+    },
     "data_refresh_rate": {
       "title": "Data Refresh Rate",
       "description": "Sets refresh rate for games data. Overrides rotation rates to limit requests* (Min=5.0)",
@@ -34,6 +39,7 @@
   "required": [
     "preferred_teams",
     "rotation",
+    "helmet_logos",
     "data_refresh_rate",
     "debug",
     "testing"
