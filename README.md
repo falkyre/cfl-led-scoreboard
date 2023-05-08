@@ -14,15 +14,21 @@ This project was inspired by the following projects:
 
 ## Features (v0.2.x)
 
-### GAME ROTATION
+### Games Rotation
 
-Hey, neat-o! You can rotate through multiple games now if you want to! Will still need some finessing, but definitely an improvement.
+Rotate through games based on favourites and games state (halftime).
+
+### Primary Team or Helmet Logo Option
+
+See `helmet_logos` in `config.json`. Default uses primary team logos.
 
 ### Pregame Countdown
 
-Currently shows the team logos and the game time...
+Currently shows the team logos and the game time.
 
 ![pregame](imgs/pregame.jpg)
+
+![pregame](imgs/pregame_helmet.jpg)
 
 ...or countdown.
 
@@ -40,7 +46,6 @@ Just kind of looks like the pre-game screen but with the final scores.
 
 ## Roadmap
 
-* Test TD, FG, and other play display/rendering.
 * Preseason spec.
 * Playoff spec.
 * Handle off-season.
@@ -148,7 +153,7 @@ Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/r
 --led-no-hardware-pulse   Don't use hardware pin-pulse generation.
 --led-rgb-sequence        Switch if your matrix has led colors swapped. (Default: RGB)
 --led-pixel-mapper        Apply pixel mappers. e.g Rotate:90, U-mapper
---led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
+--led-row-addr-type       0 = default; 1 = AB-addressed panels; 2 = direct row select; 3 = ABC-addressed panels; 4 = ABC Shift + DE direct (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 ```
 
