@@ -68,11 +68,9 @@ class Data:
                     self.games = cflparser.get_all_games()
 
                     if self.config.rotation_only_preferred and self.config.preferred_teams:
-                        filtered_games = self.__filter_list_of_games(
-                            self.games, self.config.preferred_teams)
-                        if filtered_games:
-                            debug.log(f'Filtering games for preferred team - {self.config.preferred_teams}')
-                            self.games = filtered_games
+                        debug.log(f'Filtering games for preferred team - {self.config.preferred_teams}')
+                        self.games = self.__filter_list_of_games(
+                        self.games, self.config.preferred_teams)
 
                     self.games_refresh_time = t.time()
                     self.needs_refresh = False
