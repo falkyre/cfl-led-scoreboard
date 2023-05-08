@@ -22,10 +22,13 @@ class MainRenderer:
         # Create a new data image.
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
+
         # Load the fonts
-        self.font = ImageFont.truetype("fonts/score_large.otf", 16)
-        self.font_15 = ImageFont.truetype("fonts/score_large.otf", 15)
-        self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8)
+        font_multiplier = int(self.height / 32)
+        self.font = ImageFont.truetype("fonts/score_large.otf", 16 * font_multiplier)
+        self.font_15 = ImageFont.truetype("fonts/score_large.otf", 15 * font_multiplier)
+        self.font_small = ImageFont.truetype("fonts/04B_24__.TTF", 12 * font_multiplier)
+        self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8 * font_multiplier)
 
     def render(self):
         """Displays CFL games on board depending on state."""
@@ -257,28 +260,38 @@ class MainRenderer:
         seconds = f"{game['seconds']}" if game['seconds'] else None
         time_period = f"{minutes}:{seconds}" if minutes and seconds else ""
         pos_colour = (255, 255, 255)
+
         if game['redzone']:
             pos_colour = (255, 25, 25)
-        if game['possession']:
-            pos = game['possession']
-            info_pos = center_text(self.font_mini.getsize(str(pos))[0], self.width / 2)
-            self.draw.multiline_text((info_pos, round(0.4063 * self.height)), str(pos), fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+
+        # Set the position of the information on screen.
+        home_score_size = self.font.getsize(homescore)[0]
+        time_period_pos = center_text(self.font_mini.getsize(time_period)[0], self.width / 2)
+        quarter_pos = center_text(self.font_small.getsize(quarter)[0], self.width / 2)
+
+        # Draw Quarter
+        self.draw.multiline_text((quarter_pos, 0), quarter, fill=(255, 255, 255), font=self.font_small, align="center", stroke_width=1, stroke_fill=(0,0,0))
+
+        # Draw Time
+        self.draw.multiline_text((time_period_pos, round(0.33 * self.height)), time_period, fill=(255, 255, 255), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+ 
+        # Draw Possession & Down
         if game['down'] and game['ytg']:
             down = f"{game['down']}&{game['ytg']}"
-            info_pos = center_text(self.font_mini.getsize(str(down))[0], self.width / 2)
-            self.draw.multiline_text((info_pos, round(0.5937 * self.height)), str(down), fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+            if game['possession'] == game['away_team_abbrev']:
+                down = f"<> {down}"
+            elif game['possession'] == game['home_team_abbrev']:
+                down = f" {down} <>"
+            info_pos = center_text(self.font_mini.getsize(down)[0], self.width / 2)
+            self.draw.multiline_text((info_pos, round(0.5937 * self.height)), down, fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+
+        # Draw Ball Spot
         if game['spot']:
             spot = f"{game['spot']}"
             info_pos = center_text(self.font_mini.getsize(spot)[0], self.width / 2)
             self.draw.multiline_text((info_pos, round(0.7812 * self.height)), spot, fill=(pos_colour), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
 
-        # Set the position of the information on screen.
-        home_score_size = self.font.getsize(homescore)[0]
-        time_period_pos = center_text(self.font_mini.getsize(time_period)[0], self.width / 2)
-        quarter_pos = center_text(self.font_mini.getsize(quarter)[0], self.width / 2)
-
-        self.draw.multiline_text((quarter_pos, 0), quarter, fill=(255, 255, 255), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
-        self.draw.multiline_text((time_period_pos, round(0.1875 * self.height)), time_period, fill=(255, 255, 255), font=self.font_mini, align="center", stroke_width=1, stroke_fill=(0,0,0))
+        # Draw Scores
         self.draw.multiline_text((round(0.0938 * self.width), round(0.5938 * self.height)), awayscore, fill=(255, 255, 255), font=self.font, align="center", stroke_width=1, stroke_fill=(0,0,0))
         self.draw.multiline_text((round(0.9219 * self.width) - home_score_size, round(0.5938 * self.height)), homescore, fill=(255, 255, 255), font=self.font, align="center", stroke_width=1, stroke_fill=(0,0,0))
 
@@ -343,6 +356,9 @@ class MainRenderer:
         # Load the gif file
         ball = Image.open("assets/td_ball.gif")
         words = Image.open("assets/td_words.gif")
+        if self.height == 64:
+            ball = ball.resize(128, 64)
+            words = words.resize(128, 64)
         # Set the frame index to 0
         frameNo = 0
         self.canvas.Clear()
@@ -376,6 +392,8 @@ class MainRenderer:
         debug.log('FG')
         # Load the gif file
         im = Image.open("assets/fg.gif")
+        if self.height == 64:
+            im = im.resize(128, 64)
         # Set the frame index to 0
         frameNo = 0
         self.canvas.Clear()
