@@ -3,6 +3,7 @@ import collections
 import datetime
 import os
 import pytz
+from PIL import Image
 from tzlocal import get_localzone
 from rgbmatrix import RGBMatrixOptions, graphics
 import debug
@@ -57,18 +58,19 @@ def args():
     parser.add_argument("--led-pixel-mapper", action="store",
                         help="Apply pixel mappers. e.g \"Rotate:90\"", default="", type=str)
     parser.add_argument("--led-row-addr-type", action="store",
-                        help="0 = default; 1 = AB-addressed panels. (Default: 0)", default=0, type=int, choices=[0, 1])
+                        help="0 = default; 1 = AB-addressed panels; 2 = direct row select; 3 = ABC-addressed panels; 4 = ABC Shift + DE direct", default=0, type=int, choices=[0, 1, 2, 3, 4])
     parser.add_argument("--led-multiplexing", action="store",
                         help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)
 
     # User Options
-    parser.add_argument("--fav-team", action="store",
-                        help="ID of the team to fallow. (Default:8 (Montreal Canadien)) Change the default in the config.json", type=int)
+    parser.add_argument("--week", action="store",
+                        help="Integer for current season week to use. For testing purposes.", type=int)
 
     return parser.parse_args()
 
 
 def led_matrix_options(args):
+    debug.log(f"Loaded arguments: {args}")
     options = RGBMatrixOptions()
 
     if args.led_gpio_mapping is not None:
@@ -120,3 +122,35 @@ def convert_time(utc_dt):
     local_dt = datetime.datetime.strptime(
         utc_dt, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.utc).astimezone(local_tz)
     return local_tz.normalize(local_dt)  # normalize might be unnecessary
+
+
+def calculate_aspect(width: int, height: int) -> str:
+    """
+    Calculate aspect ratio from xy input.
+    """
+    def gcd(a, b):
+        """The GCD (greatest common divisor) is the highest number that evenly divides both width and height."""
+        return a if b == 0 else gcd(b, a % b)
+
+    r = gcd(width, height)
+    x = int(width / r)
+    y = int(height / r)
+
+    return f"{x}:{y}"
+
+
+def get_logo(team, max_height, helmet=True) -> Image:
+    """
+    Gets logo from file and resizes to max height. Primary logos if arg passed.
+    """
+    if helmet is True:
+        logo_file = Image.open('logos/{}.png'.format(team.lower()))
+    else:
+        logo_file = Image.open('logos/primary/{}.png'.format(team.lower()))
+
+    max_wh = max_height  # the maximum height and width
+    width1, height1 = logo_file.size
+    ratio1 = float(max_wh / height1)
+    logo_out = logo_file.resize(
+        (int(width1 * ratio1), int(height1 * ratio1)), Image.BOX)
+    return logo_out

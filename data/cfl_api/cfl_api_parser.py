@@ -245,8 +245,8 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
             season, week, preseason = get_current_season()
             if preseason:
                 week = int(week) - 4 # Preseason uses negative week filter in url
-                    
             req_url = SCHEDULE_URL.format(base=BASE_URL, year=season, api_key=API_KEY, week_filter=f'&filter[week][eq]={week}')
+            #req_url = SCHEDULE_URL.format(base=BASE_URL, year=2023, api_key=API_KEY, week_filter=f'&filter[week][eq]=1')
             debug.info(f'Fetching games from: {req_url}')
             data = requests.get(req_url, timeout=REQUEST_TIMEOUT)
             sched = data.json()
@@ -285,6 +285,7 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
                 # ID of the Home team
                 'home_team_id': game['team_2']['team_id'],
                 'home_score': game['team_2']['score'],  # Home team goals
+                'home_win': game['team_2']['is_winner'],  # Home wins
 
                 # Away team name abbreviation
                 'away_team_abbrev': game['team_1']['abbreviation'],
@@ -293,6 +294,7 @@ def get_all_games(day=ISO_CURRENT_DATE, year=CURRENT_YEAR):
                 # Away team name
                 'away_team_name': game['team_1']['nickname'],
                 'away_score': game['team_1']['score'],  # Away team goals
+                'away_win': game['team_1']['is_winner'],  # Away wins
             }
             # put this dictionary into the larger dictionary
             games.append(output)
@@ -425,6 +427,7 @@ def get_overview(game_id):
             'home_team_id': game['data'][0]['team_2']['team_id'],
             # Home team goals
             'home_score': game['data'][0]['team_2']['score'],
+            'home_win': game['data'][0]['team_2']['is_winner'],  # Home wins
 
             # Away team name abbreviation
             'away_team_abbrev': game['data'][0]['team_1']['abbreviation'],
@@ -434,6 +437,7 @@ def get_overview(game_id):
             'away_team_name': game['data'][0]['team_1']['nickname'],
             # Away team goals
             'away_score': game['data'][0]['team_1']['score'],
+            'away_win': game['data'][0]['team_1']['is_winner'],  # Away wins
         }
     # put this dictionary into the larger dictionary
         return output
