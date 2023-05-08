@@ -147,17 +147,18 @@ Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/r
 --led-brightness          Sets brightness level. Range: 1..100. (Default: 100)
 --led-gpio-mapping        Hardware Mapping: regular, adafruit-hat, adafruit-hat-pwm
 --led-scan-mode           Progressive or interlaced scan. 0 = Progressive, 1 = Interlaced. (Default: 1)
---led-pwm-lsb-nanoseconds  Base time-unit for the on-time in the lowest significant bit in nanoseconds. (Default: 130)
---led-pwm-dither-bits       Time dithering of lower bits. (Default: 0)
+--led-pwm-lsb-nanoseconds Base time-unit for the on-time in the lowest significant bit in nanoseconds. (Default: 130)
+--led-pwm-dither-bits     Time dithering of lower bits. (Default: 0)
 --led-show-refresh        Shows the current refresh rate of the LED panel.
 --led-slowdown-gpio       Slow down writing to GPIO. Range: 0..4. (Default: 1)
---led-limit-refresh         Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
+--led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
 --led-no-hardware-pulse   Don't use hardware pin-pulse generation.
 --led-rgb-sequence        Switch if your matrix has led colors swapped. (Default: RGB)
 --led-pixel-mapper        Apply pixel mappers. e.g Rotate:90, U-mapper
 --led-row-addr-type       0 = default; 1 = AB-addressed panels; 2 = direct row select; 3 = ABC-addressed panels; 4 = ABC Shift + DE direct (Default: 0)
---led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
---led-panel-type        Needed to initialize special panels. Supported: `FM6126A`, `FM6127`
+--led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip;
+                          5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
+--led-panel-type          Needed to initialize special panels. Eg. `FM6126A`, `FM6126B`, `FM6127`
 ```
 
 ## Licensing
