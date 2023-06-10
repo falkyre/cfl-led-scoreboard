@@ -2,7 +2,7 @@
 
 Display your favourite CFL team score on an Raspberry Pi powered LED matrix. Currently supports 64x32 boards only.
 
-__Note:__ A personal [CFL API key](https://api.cfl.ca/key-request) is required.
+__Note:__ ~~A personal [CFL API key](https://api.cfl.ca/key-request) is required.~~ *Current CFL API status is non functional. Pending information request.* 
 
 ### Credit and inpsiration
 
