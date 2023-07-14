@@ -8,9 +8,9 @@ from rich.logging import RichHandler
 DEBUG_ENABLED = False
 
 
-def set_debug_status(config_debug):
-    global DEBUG_ENABLED  # pylint: disable=global-statement
-    DEBUG_ENABLED = config_debug
+#def set_debug_status(config_debug):
+#    global DEBUG_ENABLED  # pylint: disable=global-statement
+#    DEBUG_ENABLED = config_debug
 
 # Create a logger object.
 
@@ -22,7 +22,7 @@ logger.propagate = False
 
 def set_debug_status(config,logcolor=False,loglevel='INFO'):
 	global debug_enabled
-	debug_enabled = config.debug
+	debug_enabled = False
 	colorAvail = False
 
 	if sys.stdin.isatty() and logcolor:
