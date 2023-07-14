@@ -3,6 +3,7 @@ import collections
 import datetime
 import os
 import pytz
+from PIL import Image
 from tzlocal import get_localzone
 from rgbmatrix import RGBMatrixOptions, graphics
 import debug
@@ -46,10 +47,14 @@ def args():
                         help="Progressive or interlaced scan. 0 = Progressive, 1 = Interlaced. (Default: 1)", default=1, choices=range(2), type=int)
     parser.add_argument("--led-pwm-lsb-nanoseconds", action="store",
                         help="Base time-unit for the on-time in the lowest significant bit in nanoseconds. (Default: 130)", default=130, type=int)
+    parser.add_argument("--led-pwm-dither-bits", action="store",
+                        help="Time dithering of lower bits (Default: 0)", default=0, type=int)
     parser.add_argument("--led-show-refresh", action="store_true",
                         help="Shows the current refresh rate of the LED panel.")
     parser.add_argument("--led-slowdown-gpio", action="store",
                         help="Slow down writing to GPIO. Range: 0..4. (Default: 1)", choices=range(5), type=int)
+    parser.add_argument("--led-limit-refresh", action="store",
+                        help="Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0", default=0, type=int)
     parser.add_argument("--led-no-hardware-pulse", action="store",
                         help="Don't use hardware pin-pulse generation.")
     parser.add_argument("--led-rgb-sequence", action="store",
@@ -57,13 +62,17 @@ def args():
     parser.add_argument("--led-pixel-mapper", action="store",
                         help="Apply pixel mappers. e.g \"Rotate:90\"", default="", type=str)
     parser.add_argument("--led-row-addr-type", action="store",
-                        help="0 = default; 1 = AB-addressed panels. (Default: 0)", default=0, type=int, choices=[0, 1])
+                        help="0 = default; 1 = AB-addressed panels; 2 = direct row select; 3 = ABC-addressed panels; 4 = ABC Shift + DE direct", default=0, type=int, choices=[0, 1, 2, 3, 4])
     parser.add_argument("--led-multiplexing", action="store",
-                        help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)
+                        help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)     
+    parser.add_argument("--led-panel-type", action="store",
+                        help="Needed to initialize special panels. Supported: 'FM6126A', 'FM6127'", default="", type=str)
 
     # User Options
-    parser.add_argument("--fav-team", action="store",
-                        help="ID of the team to fallow. (Default:8 (Montreal Canadien)) Change the default in the config.json", type=int)
+    parser.add_argument("--week", action="store",
+                        help="Integer for current season week to use. For testing purposes.", type=int)
+    parser.add_argument("--season", action="store",
+                        help="Integer for current season to use. For testing purposes.", type=int)
 
     parser.add_argument("--logcolor", action="store_true", help="Display log in color (command line only)")
 
@@ -73,6 +82,7 @@ def args():
 
 
 def led_matrix_options(args):
+    debug.log(f"Loaded arguments: {args}")
     options = RGBMatrixOptions()
 
     if args.led_gpio_mapping is not None:
@@ -85,15 +95,26 @@ def led_matrix_options(args):
     options.row_address_type = args.led_row_addr_type
     options.multiplexing = args.led_multiplexing
     options.pwm_bits = args.led_pwm_bits
+    options.scan_mode = args.led_scan_mode
     options.brightness = args.led_brightness
     options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
     options.led_rgb_sequence = args.led_rgb_sequence
+    options.panel_type = args.led_panel_type
+    options.limit_refresh_rate_hz = args.led_limit_refresh
+
     try:
         options.pixel_mapper_config = args.led_pixel_mapper
     except AttributeError:
         debug.warning("Your compiled RGB Matrix Library is out of date.")
         debug.warning(
             "The --led-pixel-mapper argument will not work until it is updated.")
+
+    try:
+        options.pwm_dither_bits = args.led_pwm_dither_bits
+    except AttributeError:
+        debug.warning("Your compiled RGB Matrix Library is out of date.")
+        debug.warning(
+            "The --led-pwm-dither-bits argument will not work until it is updated.")
 
     if args.led_show_refresh:
         options.show_refresh_rate = 1
@@ -124,3 +145,35 @@ def convert_time(utc_dt):
     local_dt = datetime.datetime.strptime(
         utc_dt, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.utc).astimezone(local_tz)
     return local_tz.normalize(local_dt)  # normalize might be unnecessary
+
+
+def calculate_aspect(width: int, height: int) -> str:
+    """
+    Calculate aspect ratio from xy input.
+    """
+    def gcd(a, b):
+        """The GCD (greatest common divisor) is the highest number that evenly divides both width and height."""
+        return a if b == 0 else gcd(b, a % b)
+
+    r = gcd(width, height)
+    x = int(width / r)
+    y = int(height / r)
+
+    return f"{x}:{y}"
+
+
+def get_logo(team, max_height, helmet=True) -> Image:
+    """
+    Gets logo from file and resizes to max height. Primary logos if arg passed.
+    """
+    if helmet is True:
+        logo_file = Image.open('logos/{}.png'.format(team.lower()))
+    else:
+        logo_file = Image.open('logos/primary/{}.png'.format(team.lower()))
+
+    max_wh = max_height  # the maximum height and width
+    width1, height1 = logo_file.size
+    ratio1 = float(max_wh / height1)
+    logo_out = logo_file.resize(
+        (int(width1 * ratio1), int(height1 * ratio1)), Image.BOX)
+    return logo_out

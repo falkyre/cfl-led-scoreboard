@@ -27,7 +27,7 @@ class Data:
         self.time_since_day_refresh = t.time()
         self.current_week = None
         self.current_season = None
-        self.get_season_info()
+        self.preseason = None
 
     # Fetch the teams info
         self.games_refresh_time = config.data_refresh_rate
@@ -40,7 +40,7 @@ class Data:
 
     def get_season_info(self):
         """Get current season & week."""
-        [self.current_season, self.current_week] = cflparser.get_current_season()
+        [self.current_season, self.current_week, self.preseason] = cflparser.get_current_season()
 
     def get_current_date(self):
         """Get current local datetime."""
@@ -56,11 +56,11 @@ class Data:
                     time_since_refresh = t.time() - self.games_refresh_time
                     if not time_since_refresh > self.config.data_refresh_rate:
                         delay = self.config.data_refresh_rate - time_since_refresh
-                        debug.info(f"Rate limiting games refresh. Sleeping for {round(delay)}s")
+                        debug.warning(f"Rate limiting games refresh. Sleeping for {round(delay)}s")
                         time_since_day_start = t.time() - self.time_since_day_refresh
 
                         if time_since_day_start > 86400:
-                            self.current_week = cflparser.get_current_week()
+                            self.current_week = cflparser.get_current_season()[1]
 
                         t.sleep(self.config.data_refresh_rate -
                                 time_since_refresh)
@@ -68,11 +68,9 @@ class Data:
                     self.games = cflparser.get_all_games()
 
                     if self.config.rotation_only_preferred and self.config.preferred_teams:
-                        filtered_games = self.__filter_list_of_games(
-                            self.games, self.config.preferred_teams)
-                        if filtered_games:
-                            debug.info(f'Filtering games for preferred team - {self.config.preferred_teams}')
-                            self.games = filtered_games
+                        debug.log(f'Filtering games for preferred team - {self.config.preferred_teams}')
+                        self.games = self.__filter_list_of_games(
+                        self.games, self.config.preferred_teams)
 
                     self.games_refresh_time = t.time()
                     self.needs_refresh = False
@@ -99,7 +97,7 @@ class Data:
                     time_since_refresh = t.time() - self.games_refresh_time
                     if not self.first_refresh and not time_since_refresh > self.config.data_refresh_rate:
                         delay = self.config.data_refresh_rate - time_since_refresh
-                        debug.info(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
+                        debug.warning(f"Rate limiting get_overview({game_id}). Sleeping for {round(delay)}s")
                         t.sleep(
                             self.config.data_refresh_rate - time_since_refresh)
                     self.games[self.current_game_index] = cflparser.get_overview(
@@ -152,12 +150,12 @@ class Data:
                     if team in [current_game['home_team_abbrev'], current_game['away_team_abbrev']] and current_game['state'] == 'In-Progress':
                         showing_preferred_team = True
 
-        debug.info(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
+        debug.log(f"showing_preferred_game = {showing_preferred_team} {'(Live)' if showing_preferred_team else '(Not Live)'}")
         return showing_preferred_team
 
     def advance_to_next_game(self):
         """Advances game index to next game."""
-        debug.info("Advancing to next game.")
+        debug.log("Advancing to next game.")
         self.current_game_index = self.__next_game_index()
 
     def __filter_list_of_games(self, games, teams):

@@ -1,6 +1,6 @@
 {
     "preferred_teams": [
-        "WPG"
+        "HAM"
     ],
     "rotation": {
         "enabled": true,
@@ -13,7 +13,8 @@
         "while_preferred_team_live": true,
         "while_preferred_team_halftime": true
     },
-    "data_refresh_rate": 15,
-    "debug": false,
+    "helmet_logos": false,
+    "data_refresh_rate": 120,
+    "debug": true,
     "testing": false
 }

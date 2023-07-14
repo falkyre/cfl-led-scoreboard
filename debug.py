@@ -5,7 +5,12 @@ import sys
 import logging
 from rich.logging import RichHandler
 
-debug_enabled = False
+DEBUG_ENABLED = False
+
+
+def set_debug_status(config_debug):
+    global DEBUG_ENABLED  # pylint: disable=global-statement
+    DEBUG_ENABLED = config_debug
 
 # Create a logger object.
 
@@ -51,8 +56,9 @@ def set_debug_status(config,logcolor=False,loglevel='INFO'):
 
 
 def __debugprint(text):
-	print(text)
-	sys.stdout.flush()
+    print(text)
+    sys.stdout.flush()
+
 
 def log(text):
 	if debug_enabled:
@@ -72,4 +78,4 @@ def info(text):
 	logger.info(text)
 
 def __timestamp():
-	return time.strftime("%H:%M:%S", time.localtime())
+    return time.strftime("%H:%M:%S", time.localtime())

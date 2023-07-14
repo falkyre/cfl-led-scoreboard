@@ -2,7 +2,7 @@
 
 Display your favourite CFL team score on an Raspberry Pi powered LED matrix. Currently supports 64x32 boards only.
 
-__Note:__ A personal [CFL API key](https://api.cfl.ca/key-request) is required.
+__Note:__ ~~A personal [CFL API key](https://api.cfl.ca/key-request) is required.~~ *Current CFL API status is non functional. Pending information request.* 
 
 ### Credit and inpsiration
 
@@ -14,15 +14,21 @@ This project was inspired by the following projects:
 
 ## Features (v0.2.x)
 
-### GAME ROTATION
+### Games Rotation
 
-Hey, neat-o! You can rotate through multiple games now if you want to! Will still need some finessing, but definitely an improvement.
+Rotate through games based on favourites and games state (halftime).
+
+### Primary Team or Helmet Logo Option
+
+See `helmet_logos` in `config.json`. Default uses primary team logos.
 
 ### Pregame Countdown
 
-Currently shows the team logos and the game time...
+Currently shows the team logos and the game time.
 
 ![pregame](imgs/pregame.jpg)
+
+![pregame](imgs/pregame_helmet.jpg)
 
 ...or countdown.
 
@@ -40,7 +46,6 @@ Just kind of looks like the pre-game screen but with the final scores.
 
 ## Roadmap
 
-* Test TD, FG, and other play display/rendering.
 * Preseason spec.
 * Playoff spec.
 * Handle off-season.
@@ -135,21 +140,25 @@ Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/r
 
 ```
 --led-rows                Display rows. 16 for 16x32, 32 for 32x32. (Default: 32)
---led-cols                Panel columns. Typically 32 or 64. (Default: 32)
+--led-cols                Panel columns. Typically 32 or 64. (Default: 64)
 --led-chain               Daisy-chained boards. (Default: 1)
 --led-parallel            For Plus-models or RPi2: parallel chains. 1..3. (Default: 1)
 --led-pwm-bits            Bits used for PWM. Range 1..11. (Default: 11)
 --led-brightness          Sets brightness level. Range: 1..100. (Default: 100)
 --led-gpio-mapping        Hardware Mapping: regular, adafruit-hat, adafruit-hat-pwm
 --led-scan-mode           Progressive or interlaced scan. 0 = Progressive, 1 = Interlaced. (Default: 1)
---led-pwm-lsb-nanosecond  Base time-unit for the on-time in the lowest significant bit in nanoseconds. (Default: 130)
+--led-pwm-lsb-nanoseconds Base time-unit for the on-time in the lowest significant bit in nanoseconds. (Default: 130)
+--led-pwm-dither-bits     Time dithering of lower bits. (Default: 0)
 --led-show-refresh        Shows the current refresh rate of the LED panel.
 --led-slowdown-gpio       Slow down writing to GPIO. Range: 0..4. (Default: 1)
+--led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
 --led-no-hardware-pulse   Don't use hardware pin-pulse generation.
 --led-rgb-sequence        Switch if your matrix has led colors swapped. (Default: RGB)
 --led-pixel-mapper        Apply pixel mappers. e.g Rotate:90, U-mapper
---led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
---led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
+--led-row-addr-type       0 = default; 1 = AB-addressed panels; 2 = direct row select; 3 = ABC-addressed panels; 4 = ABC Shift + DE direct (Default: 0)
+--led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip;
+                          5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
+--led-panel-type          Needed to initialize special panels. Eg. `FM6126A`, `FM6126B`, `FM6127`
 ```
 
 ## Licensing
